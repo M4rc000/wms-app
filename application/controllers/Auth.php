@@ -54,7 +54,7 @@ class Auth extends CI_Controller {
 					];
 					$this->session->set_userdata($data);
 					if ($user['Role_id'] == 1) {
-						redirect('admin_head/dashboard');
+						redirect('adminhead/dashboard');
 					} else {
 						redirect('user');
 					}

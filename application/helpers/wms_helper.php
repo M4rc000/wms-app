@@ -13,9 +13,15 @@ function is_logged_in()
 		}
 		else{
 			$role_id = $ci->session->userdata('role_id');
-	
-			$queryMenu = $ci->db->get_where('user_menu', ['Name' => $menu])->row_array();
-			$menu_id = $queryMenu['Id'];
+			
+			if($menu == 'adminhead'){
+				$menu_id = 1;
+			}
+			else{
+				$queryMenu = $ci->db->get_where('user_menu', ['Name' => $menu])->row_array();
+				$menu_id = $queryMenu['Id'];
+			}
+			
 			$userAccess = $ci->db->get_where('user_access_menu', [
 				'Role_id' => $role_id,
 				'Menu_id' => $menu_id
@@ -28,9 +34,9 @@ function is_logged_in()
 			// echo '<br>';
 			// echo '<br>';
 			// echo "Menu ID: ", $menu_id;
-			// echo '<br>';
-			// echo '<br>';
-			// var_dump($queryMenu);
+			// // echo '<br>';
+			// // echo '<br>';
+			// // var_dump($queryMenu);
 			// echo '<br>';
 			// echo '<br>';
 			// var_dump($menu_id);
