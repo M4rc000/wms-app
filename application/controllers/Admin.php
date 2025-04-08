@@ -9,6 +9,7 @@ class Admin extends CI_Controller
     {
         parent::__construct();
         is_logged_in();
+		perform_access_check();
         $this->load->library('form_validation');
         $this->load->library('pagination');
         $this->load->model('AdminHead_model', 'AHModel');

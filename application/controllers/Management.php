@@ -8,24 +8,9 @@ class Management extends CI_Controller
 	{
 		parent::__construct();
 		is_logged_in();
+		perform_access_check();
 		$this->load->library('form_validation');
 		$this->load->library('pagination');
 		$this->load->model('Management_model', 'MGModel');
-	}
-
-	public function index()
-	{
-		$data['title'] = 'Dashboard';
-
-		$data['email'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('user', ['name' => $this->session->userdata('name')])->row_array();
-
-		// $data['user'] = $this->AModel->getAllUsers();
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('templates/sidebar', $data);
-		$this->load->view('admin/index', $data);
-		$this->load->view('templates/footer');
 	}
 }

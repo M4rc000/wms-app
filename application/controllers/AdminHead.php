@@ -8,15 +8,16 @@ class AdminHead extends CI_Controller {
     {
         parent::__construct();
         is_logged_in();
+		perform_access_check();
         $this->load->library('form_validation');
         $this->load->library('pagination');
-        $this->load->model('AdminHead_model','AHModel');
+        $this->load->model('AdminHead_model','AHModel');   
     }
 	
 	public function dashboard(){
         $data['title'] = 'Dashboard';
 
-        $data['email'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
         $data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
         
         // $data['user'] = $this->AModel->getAllUsers();

@@ -117,13 +117,6 @@
 				</li>
 
 				<li>
-					<a class="dropdown-item d-flex align-items-center" href="<?= base_url('user/change_password'); ?>">
-						<i class="bx bx-lock"></i>
-						<span>Change password</span>
-					</a>
-				</li>
-
-				<li>
 					<hr class="dropdown-divider">
 				</li>
 

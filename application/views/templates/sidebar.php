@@ -22,8 +22,8 @@
 			<?php
 			$menuId = $m['Id'];
 			$querySubMenu = "SELECT um.Id as menu_id, um.Name as menu_name, usm.Id, usm.Name, usm.Menu_id, usm.Url, usm.Icon, usm.Active FROM `user_sub_menu` AS usm
-							JOIN `user_menu` AS um ON usm.Menu_id = um.Id
-							JOIN `user_access_submenu` ON usm.Id = `user_access_submenu`.`Submenu_id`
+								JOIN `user_menu` AS um ON usm.Menu_id = um.Id
+								JOIN `user_access_submenu` ON usm.Id = `user_access_submenu`.`Submenu_id`
 									WHERE usm.Menu_id = $menuId
 									AND `user_access_submenu`.`Role_id` = $role_id
 									AND usm.Active = 1";

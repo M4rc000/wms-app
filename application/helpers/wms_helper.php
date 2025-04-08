@@ -79,3 +79,37 @@ function check_access_submenu($role_id, $menu_id, $submenu_id)
 		return "checked='checked'";
 	}
 }
+
+function check_user_access($role_id, $menu_id, $submenu_id = null)
+{
+	// Get the current CI instance
+	$CI = &get_instance();
+
+	// Load the Access_model (if not already loaded)
+	$CI->load->model('Access_model', 'ACModel');
+
+	// Use the Access_model to verify access
+	return $CI->ACModel->checkAccess($role_id, $menu_id, $submenu_id);
+}
+
+function perform_access_check()
+{
+	$CI = &get_instance();
+
+	// Load models if not already loaded
+	$CI->load->model('Access_model', 'ACModel');
+
+	$user_session = $CI->db->get_where('users', [
+		'Email' => $CI->session->userdata('email')
+	])->row_array();
+	$role_id = intval($user_session['Role_id']);
+
+	$url_menu  = $CI->uri->segment(1);
+	$menu_id   = $url_menu == 'adminhead' ? 1 : intval($CI->ACModel->getMenuId($url_menu));
+	$url_submenu  = $CI->uri->segment(2);
+	$submenu_id = intval($CI->ACModel->getSubMenuId($url_submenu));
+
+	if (!check_user_access($role_id, $menu_id, $submenu_id)) {
+		redirect('user');
+	}
+}
