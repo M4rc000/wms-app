@@ -22,22 +22,22 @@
 			<?php $number = 0; foreach($roles as $role) : $number++?>
                   <tr>
                     <td><?=$number;?></td>
-                    <td><?=$role['id'];?></td>
-                    <td><?=$role['role'];?></td>
-                    <td><?=$role['crtdt'];?></td>
-                    <td><?=$role['crtby'];?></td>
-                    <td><?=$role['upddt'];?></td>
-                    <td><?=$role['updby'];?></td>
+                    <td><?=$role['Id'];?></td>
+                    <td><?=$role['Name'];?></td>
+                    <td><?=$role['Created_at'];?></td>
+                    <td><?=$role['Created_by'];?></td>
+                    <td><?=$role['Updated_at'];?></td>
+                    <td><?=$role['Updated_by'];?></td>
 					<td>
-						<a href="<?= base_url('admin/roleAccess/' . $role['id']); ?>">
+						<a href="<?= base_url('adminhead/roleAccess/' . $role['Id']); ?>">
 							<button class="btn btn-warning">
 								<i class="bx bxs-wrench" style="color: white;"></i>
 							</button>
 						</a>
-						<button class="btn btn-success ms-1" data-bs-toggle="modal" data-bs-target="#editModal<?=$role['id'];?>">
+						<button class="btn btn-success ms-1" data-bs-toggle="modal" data-bs-target="#editModal<?=$role['Id'];?>">
 							<i class="bx bxs-edit" style="color: white;"></i>
 						</button>
-						<button class="btn btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal<?=$role['id'];?>">
+						<button class="btn btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal<?=$role['Id'];?>">
 							<i class="bx bxs-trash"></i>
 						</button>
 					</td>
@@ -56,18 +56,18 @@
 <div class="modal fade" id="addModal" tabindex="-1">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-	<?= form_open_multipart('admin/AddRole'); ?>
+	<?= form_open_multipart('adminhead/AddRole'); ?>
 		<div class="modal-header">
 			<h5 class="modal-title">Add Role</h5>
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
 		<div class="modal-body">
-			<!-- GET USER -->
-			<input type="text" class="form-control" id="user" name="user" value="<?=$name['username'];?>" hidden>
+			<!-- GET USER ID -->
+			<input type="text" class="form-control" id="user_id" name="user_id" value="<?=$user['Id'];?>" hidden>
 			<div class="row ps-2">
 				<div class="col-4">
 					<label for="id" class="form-label">ID</label>
-					<input type="text" class="form-control" id="id" name="id" value="<?=intval($lastRoleId[0]['id'])+1;?>" readonly>
+					<input type="text" class="form-control" id="id" name="id" value="<?=intval($lastRoleId['Id'])+1;?>" readonly>
 				</div>
 				<div class="col-4">
 					<label for="role" class="form-label">Role</label>
@@ -86,22 +86,22 @@
 
 <!-- CONFIG MODAL -->
 <?php foreach($roles as $role) : ?>
-	<div class="modal fade" id="configModal<?=$role['id'];?>" tabindex="-1">
+	<div class="modal fade" id="configModal<?=$role['Id'];?>" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<?= form_open_multipart('admin/UpdateConfigRole'); ?>
+				<?= form_open_multipart('adminhead/UpdateConfigRole'); ?>
 					<div class="modal-header">
-						<h5 class="modal-title"><b>Configuration Role</b> : <?=$role['role'];?></h5>
+						<h5 class="modal-title"><b>Configuration Role</b> : <?=$role['Name'];?></h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<!-- GET USER -->
-						<input type="text" class="form-control" id="user" name="user" value="<?=$name['username'];?>" hidden>
+						<!-- GET USER ID -->
+						<input type="text" class="form-control" id="user_id" name="user_id" value="<?=$user['Id'];?>" hidden>
 						<!-- GET ROLE -->
-						<input type="text" class="form-control" id="role" name="role" value="<?=$role['id'];?>" hidden>
+						<input type="text" class="form-control" id="role" name="role" value="<?=$role['Id'];?>" hidden>
 						<div class="row mt-4">
 							<div class="col">
-								<table class="table" id="table-access-<?=$role['id'];?>">
+								<table class="table" id="table-access-<?=$role['Id'];?>">
 									<thead>
 										<tr>
 											<th scope="col">#</th>
@@ -115,18 +115,18 @@
 										<tr>
 											<th scope="row"><?= $number; ?></th>
 											<td>
-												<?= $ms['menu']; ?>
-												<input type="hidden" name="menu_ids[]" value="<?= $ms['menu_id']; ?>">
+												<?= $ms['Name']; ?>
+												<input type="hidden" name="menu_ids[]" value="<?= $ms['Menu_id']; ?>">
 											</td>
 											<td>
-												<?= $ms['title']; ?>
-												<input type="hidden" name="submenu_ids[]" value="<?= $ms['submenu_id']; ?>">
+												<?= $ms['Name']; ?>
+												<input type="hidden" name="submenu_ids[]" value="<?= $ms['Submenu_id']; ?>">
 											</td>
 											<td class="text-center">
 												<?php
-													$role_id = $role['id']; 
-													$menu_id = $ms['menu_id'];
-													$submenu_id = $ms['submenu_id'];
+													$role_id = $role['Id']; 
+													$menu_id = $ms['Menu_id'];
+													$submenu_id = $ms['Submenu_id'];
 													$checked = check_access_submenu($role_id, $menu_id, $submenu_id);
 												?>
 												<input type="checkbox" name="sub_menu[<?=$submenu_id;?>]" id="sub_menu_<?=$submenu_id;?>" <?=$checked;?>>
@@ -151,12 +151,12 @@
 
 <!-- EDIT MODAL-->
 <?php foreach($roles as $role) : ?>
-	<div class="modal fade" id="editModal<?=$role['id'];?>" tabindex="-1">
+	<div class="modal fade" id="editModal<?=$role['Id'];?>" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-		<?= form_open_multipart('admin/editRole'); ?>
-			<!-- GET USER -->
-			<input type="text" class="form-control" id="user" name="user" value="<?=$name['username'];?>" hidden>
+		<?= form_open_multipart('adminhead/editRole'); ?>
+			<!-- GET USER ID -->
+			<input type="text" class="form-control" id="user_id" name="user_id" value="<?=$user['Id'];?>" hidden>
 			<div class="modal-header">
 				<h5 class="modal-title">Edit Role</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -165,11 +165,11 @@
 				<div class="row ps-2">
 					<div class="col-4">
 						<label for="id" class="form-label">ID</label>
-						<input type="text" class="form-control" id="id" name="id" value="<?=$role['id'];?>" readonly>
+						<input type="text" class="form-control" id="id" name="id" value="<?=$role['Id'];?>" readonly>
 					</div>
 					<div class="col-4">
 						<label for="role" class="form-label">Role</label>
-						<input type="text" class="form-control" id="role" name="role" value="<?=$role['role'];?>" required>
+						<input type="text" class="form-control" id="role" name="role" value="<?=$role['Name'];?>" required>
 					</div>
 				</div>
 			</div>
@@ -185,18 +185,18 @@
 
 <!-- DELETE CONFIRM MODAL-->
 <?php foreach($roles as $role) : ?>
-	<?= form_open_multipart('admin/deleteRole'); ?>
-		<div class="modal fade" id="DeleteConfirmModal<?= $role['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<?= form_open_multipart('adminhead/deleteRole'); ?>
+		<div class="modal fade" id="DeleteConfirmModal<?= $role['Id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
-				<!-- GET USER -->
-				<input type="text" class="form-control" id="user" name="user" value="<?=$name['username'];?>" hidden>
+				<!-- GET USER ID -->
+				<input type="text" class="form-control" id="user_id" name="user_id" value="<?=$user['Id'];?>" hidden>
 				<div class="modal-header">
 					<h4 class="modal-title pb-0 mb-0" id="exampleModalLabel">Confirm to delete Role?</h4>
 				</div>
-				<p class="px-2 mt-2">Role:  <?= $role['role']; ?> </p>
-				<input type="text" name="id" id="id" value="<?= $role['id']; ?>" style="display: none;">
-				<input type="text" name="role" id="role" value="<?= $role['role']; ?>" style="display: none;">
+				<p class="px-2 mt-2">Role:  <?= $role['Name']; ?> </p>
+				<input type="text" name="id" id="id" value="<?= $role['Id']; ?>" style="display: none;">
+				<input type="text" name="role" id="role" value="<?= $role['Name']; ?>" style="display: none;">
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 					<button type="submit" class="btn btn-primary" name="delete_user">Confirm</button>
