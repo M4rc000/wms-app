@@ -11,6 +11,6 @@ class Driver extends CI_Controller
 		perform_access_check();
 		$this->load->library('form_validation');
 		$this->load->library('pagination');
-		$this->load->model('Driver', 'DModel');
+		$this->load->model('Driver_model', 'DModel');
 	}
 }

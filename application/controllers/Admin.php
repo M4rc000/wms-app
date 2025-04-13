@@ -18,11 +18,7 @@ class Admin extends CI_Controller
     public function receiving_raw()
     {
         $data['title'] = 'Receiving Raw Material';
-
         $data['email'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-        $data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
-
-        // $data['user'] = $this->AModel->getAllUsers();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);

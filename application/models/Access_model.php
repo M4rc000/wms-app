@@ -12,7 +12,7 @@ class Access_model extends CI_Model
 		if (!$menu) {
 			return false;
 		}
-		
+
 		// Check access for the main menu in user_access_menu table
 		$this->db->where('Role_id', $role_id);
 		$this->db->where('Menu_id', $menu->Id);
@@ -46,19 +46,31 @@ class Access_model extends CI_Model
 		return $accessSub ? true : false;
 	}
 
-	public function getMenuId($menu_name){
-		$query = $this->db->query("SELECT Id FROM user_menu WHERE Name LIKE ?", array("%$menu_name%"));
-		$row = $query->row(); // gets just the first row as an object
+	public function getMenuId($menu_name)
+	{
+		// Build the query with a partial match on Name.
+		$this->db->like('Name', $menu_name);
+		$this->db->select('Id');
+
+		// Execute the query on the 'user_menu' table.
+		$query = $this->db->get('user_menu');
+
+		// Get the second row (index 1).
+		$row = $query->row(1);
+
+		// Return the Id if it exists, otherwise return false.
 		return isset($row->Id) ? $row->Id : false;
 	}
 
+
 	public function getSubMenuId($submenu_name)
 	{
-		// Using query binding ensures SQL injection protection
-		$query = $this->db->query("SELECT Id FROM user_sub_menu WHERE Name LIKE ?", array("%$submenu_name%"));
-		$row = $query->row(); // gets just the first row as an object
+		$this->db->like('Name', $submenu_name);
+		$this->db->select('Id');
 
-		// Return the Id if found, or false if not.
+		$query = $this->db->get('user_sub_menu');
+
+		$row = $query->row(1);
 		return isset($row->Id) ? $row->Id : false;
 	}
 }

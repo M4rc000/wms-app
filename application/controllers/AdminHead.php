@@ -16,12 +16,8 @@ class AdminHead extends CI_Controller {
 	
 	public function dashboard(){
         $data['title'] = 'Dashboard';
-
         $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-        $data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
         
-        // $data['user'] = $this->AModel->getAllUsers();
-
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);   
         $this->load->view('templates/sidebar', $data);   
@@ -32,10 +28,7 @@ class AdminHead extends CI_Controller {
 	public function manage_user()
 	{
 		$data['title'] = 'Manage User';
-
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
-
 
 		$data['users'] = $this->AHModel->getAllUsers();
 		$data['roles'] = $this->AHModel->getAllRoles();
@@ -50,9 +43,7 @@ class AdminHead extends CI_Controller {
 	public function manage_role()
 	{
 		$data['title'] = 'Manage Role';
-
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
 
 		$data['roles'] = $this->AHModel->getAllRoles();
 		$data['menu'] = $this->AHModel->getAllMenu();
@@ -108,9 +99,7 @@ class AdminHead extends CI_Controller {
 	public function manage_menu()
 	{
 		$data['title'] = 'Manage Menu';
-
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
 
 		$data['menus'] = $this->AHModel->getAllMenu();
 		$data['lastMenuId'] = $this->AHModel->getLastMenuId();
@@ -125,10 +114,7 @@ class AdminHead extends CI_Controller {
 	public function manage_submenu()
 	{
 		$data['title'] = 'Manage Sub-Menu';
-
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
-
 
 		$data['menus'] = $this->AHModel->getAllMenu();
 		$data['submenus'] = $this->AHModel->getAllSubMenu();
@@ -333,8 +319,6 @@ class AdminHead extends CI_Controller {
 	{
 		$data['title'] = 'Role Access';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$data['name'] = $this->db->get_where('users', ['Name' => $this->session->userdata('name')])->row_array();
-
 
 		$data['role'] = $this->db->get_where('user_role', ['id' => $role_id])->row_array();
 
@@ -687,23 +671,5 @@ class AdminHead extends CI_Controller {
 		}
 
 		redirect('adminhead/manage_submenu');
-	}
-
-	public function manage_storage()
-	{
-
-		$data['title'] = 'Manage Storage';
-
-		$data['user'] = $this->db->get_where('user', ['username' => $this->session->userdata('username')])->row_array();
-		$data['name'] = $this->db->get_where('user', ['name' => $this->session->userdata('name')])->row_array();
-
-		$this->load->model('Warehouse_model', 'WModel');
-		$data['storage'] = $this->AModel->getListStorage();
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('templates/sidebar');
-		$this->load->view('admin/manage_storage', $data);
-		$this->load->view('templates/footer');
 	}
 }
