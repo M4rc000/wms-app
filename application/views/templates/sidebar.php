@@ -48,7 +48,19 @@
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item">
-					<a><?= ucfirst(strtolower(explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'))[2])); ?></a>
+					<?php
+						// Get the request path and trim leading/trailing slashes
+						$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+						$segments = explode('/', trim($path, '/'));
+
+						// Extract the last two segments of the URL dynamically.
+						$desiredSegments = array_slice($segments, -2);
+
+						// Optional: check if you indeed have two segments
+						$module = isset($desiredSegments[0]) ? ucfirst(strtolower($desiredSegments[0])) : '';
+						$page   = isset($desiredSegments[1]) ? ucfirst(strtolower($desiredSegments[1])) : '';
+					?>
+					<a><?= $module; ?></a>
 				</li>
 				<li class="breadcrumb-item active"><?= $title; ?></li>
 			</ol>
