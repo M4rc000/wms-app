@@ -5,6 +5,10 @@ class Admin_model extends CI_Model {
 	{
 		return $this->db->get('raw_material')->result_array();
 	}
+	
+	public function getListWIP(){
+		return $this->db->get('wip_material')->result_array();
+	}
 
 	public function insertData($table, $Data)
 	{

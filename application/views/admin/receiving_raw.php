@@ -58,6 +58,7 @@
 </section>
 
 <script>
+	
 	$(document).ready(function() {
 		// Add new row on button click
 		let rowIndex = 1;

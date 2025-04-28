@@ -23,7 +23,7 @@
 					<i class="bi bi-bell"></i>
 					<span class="badge bg-primary badge-number">
 						<?php
-						$query = "SELECT DISTINCT Material_no, Material_name, Updated_at, Updated_by
+						$query = "SELECT DISTINCT Material_no, Material_name, Qty, Unit, Updated_at, Updated_by
 							FROM 
 								storage
 							WHERE
@@ -54,6 +54,7 @@
 							<div>
 								<h6 style="font-size: 15px"><?= $ln['Material_no']; ?></h6>
 								<p><?= $ln['Material_name']; ?></p>
+								<p><?= $ln['Qty']; ?> <?= $ln['Unit']; ?></p>
 								<div class="row">
 									<p>
 										<?= $ln['Updated_by']; ?>

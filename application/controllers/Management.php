@@ -9,8 +9,6 @@ class Management extends CI_Controller
 		parent::__construct();
 		is_logged_in();
 		perform_access_check();
-		$this->load->library('form_validation');
-		$this->load->library('pagination');
 		$this->load->model('Management_model', 'MGModel');
 	}
 
@@ -27,6 +25,13 @@ class Management extends CI_Controller
 	}
 	
 	public function load_raw_material(){
+		$raw_materials = $this->MGModel->getRawMaterials();
+		echo json_encode($raw_materials);
+	}
+	
+	// public report_wip_material(){}
+
+	public function load_wip_material(){
 		$raw_materials = $this->MGModel->getRawMaterials();
 		echo json_encode($raw_materials);
 	}

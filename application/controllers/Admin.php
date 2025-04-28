@@ -85,4 +85,21 @@ class Admin extends CI_Controller
 
 		redirect('admin/receiving_raw');
 	}
+
+	public function receiving_wip(){
+		$data['title'] = 'Receiving WIP Material';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		$data['materials'] = $this->AModel->getListWIP();
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('admin/receiving_wip', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function addReceivingWIPMaterial(){
+		
+	}
 }
