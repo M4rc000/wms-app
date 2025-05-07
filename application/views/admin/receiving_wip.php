@@ -24,7 +24,7 @@
 						</button>
 					</div>
 				</div>
-				<?= form_open_multipart('admin/addReceivingRawMaterial'); ?>
+				<?= form_open_multipart('admin/addReceivingWIPMaterial'); ?>
 					<div class="row mt-2 mx-2">
 						<div class="col-12">
 							<div class="table-responsive">
@@ -148,21 +148,21 @@
 </script>
 
 
-<?php if ($this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW')): ?>
+<?php if ($this->session->flashdata('SUCCESS_ADD_RECEIVING_WIP')): ?>
 	<script>
 		Swal.fire({
 			title: "Success",
-			html: `<?= $this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW'); ?>`,
+			html: `<?= $this->session->flashdata('SUCCESS_ADD_RECEIVING_WIP'); ?>`,
 			icon: "success"
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_RAW')): ?>
+<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_WIP')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
 				title: "Error",
-				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_RAW'); ?>`,
+				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_WIP'); ?>`,
 				icon: "error"
 			});
 		});
