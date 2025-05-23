@@ -30,8 +30,8 @@ class Admin extends CI_Controller
         $this->load->view('admin/receiving_raw', $data);
         $this->load->view('templates/footer');
     }
-
-	public function addReceivingRawMaterial()
+	
+	public function addReceivingRawMaterial($id)
 	{
 		$materials = $this->input->post('materials');
 		if (empty($materials)) {
@@ -109,8 +109,6 @@ class Admin extends CI_Controller
 		$data['title'] = 'Demand Forecast Stock';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
-		$data['months'] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('templates/sidebar', $data);
@@ -140,7 +138,7 @@ class Admin extends CI_Controller
 			return;
 		}
 
-		// Ambil daftar material
+		// Ambil daftar material raw
 		$materialList = $this->AModel->getListMaterial();
 
 		// Ambil data historis untuk tiga bulan (dari storage yang sudah di-join)
@@ -201,6 +199,6 @@ class Admin extends CI_Controller
 			$this->session->set_flashdata('error_forecasting_stock', "Terjadi kesalahan saat menyimpan prediksi.");
 		}
 
-		redirect('admin/demand_forecasting_stock');
+		redirect('admin/demand_forecasting_stock');	
 	}
 }

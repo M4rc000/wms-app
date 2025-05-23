@@ -81,7 +81,7 @@
 			<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
 				<li class="dropdown-header">
 					<h6>
-						<?= isset($name['Name']) ? $name['Name'] : $this->session->userdata('Email'); ?>
+						<?= isset($user['Name']) ? $user['Name'] : $this->session->userdata('user'); ?>
 					</h6>
 					<span>
 						<?php
@@ -92,8 +92,8 @@
 							$role_mapping[$role['Id']] = $role['Name'];
 						}
 
-						if (isset($name['Name'])) {
-							$role_id = $name['Role_id'];
+						if (isset($user['Name'])) {
+							$role_id = $user['Role_id'];
 							echo isset($role_mapping[$role_id]) ? $role_mapping[$role_id] : 'Unknown Role';
 						} else {
 							echo 'Unknown';
