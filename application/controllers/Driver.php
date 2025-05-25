@@ -25,4 +25,13 @@ class Driver extends CI_Controller
 		$this->load->view('driver/monitoring_delivery', $data);
 		$this->load->view('templates/footer');
 	}
+
+	public function editDeliveryStatus(){
+		$delivery_status = $this->input->post('delivery_status');
+		if (empty($delivery_status)) {
+			$this->session->set_flashdata('ERROR', 'Cant update delivery status.');
+			redirect('driver/monitoring_delivery');
+			return;
+		}
+	}
 }

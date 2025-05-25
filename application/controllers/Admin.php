@@ -155,6 +155,76 @@ class Admin extends CI_Controller
 		redirect('admin/receiving_wip');
 	}
 
+	public function delivery_item(){
+		$data['title'] = 'Delivery Item';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar');
+		$this->load->view('admin/delivery_item', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function addDeliveryItem(){
+		$delivery = $this->input->post('delivery');
+		if (empty($delivery)) {
+			$this->session->set_flashdata('ERROR', 'No delivery provided.');
+			redirect('admin/delivery_item');
+			return;
+		}
+
+		$successfulInserts = 0;
+
+		// Start a transaction to ensure atomicity
+		$this->db->trans_start();
+
+		foreach ($delivery as $delivery) {
+			$DataDeliveryStatus = [
+				'Material_no'      => $delivery['Product_no'],
+				'Material_name'    => $delivery['Product_name'],
+				'Qty'              => floatval($delivery['Qty']),
+				'Unit'             => $delivery['Unit'],
+				'Status' 		   => $delivery['Status'],
+				'Driver_id' 	   => $delivery['Driver_id'],
+				'Delivery_date'    => $delivery['Delivery_date'],
+				'Created_at'       => date('Y-m-d H:i:s'),
+				'Created_by'       => $this->input->post('user_id'),
+				'Updated_at'       => date('Y-m-d H:i:s'),
+				'Updated_by'       => $this->input->post('user_id')
+			];
+
+			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
+			$check_insert = $this->db->affected_rows();
+
+			if ($check_insert > 0) {
+				// RECORD BOM LOG
+				$query_log = $this->db->last_query();
+				$log_data = [
+					'affected_table' => 'dispatch_note',
+					'queries'        => $query_log,
+					'Created_at'     => date('Y-m-d H:i:s'),
+					'Created_by'     => $this->input->post('user_id')
+				];
+				$this->db->insert('log', $log_data);
+				$successfulInserts++;
+			}
+		}
+
+		// Complete the transaction
+		$this->db->trans_complete();
+
+		// Check if all delivery were inserted successfully
+		if ($this->db->trans_status() && $successfulInserts == count($delivery)) {
+			$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', 'All delivery added successfully.');
+		} else {
+			$this->session->set_flashdata('FAILED_ADD_DELIVERY_ITEM', 'Failed to add some or all delivery.');
+		}
+
+		redirect('admin/delivery_item');
+	}
+
 	public function manage_storage(){
 		$data['title'] = 'Manage Storage';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();

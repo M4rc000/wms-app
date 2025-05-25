@@ -12,6 +12,7 @@
 								<th class="text-center">Qty</th>
 								<th class="text-center">Uom</th>
                                 <th class="text-left">Transaction Type</th>
+								<th class="text-left">Update At</th>
 							</tr>
 						</thead>
 						<tbody class="tbody-report-usage">
@@ -61,7 +62,8 @@
 						'<td class="text-left">' + material.Material_name + '</td>' +
 						'<td class="text-center">' + formatQuantity(material.Qty, material.Unit) + '</td>' +
 						'<td class="text-center">' + material.Unit + '</td>' +
-                        '<td class="text-center">' + material.Unit + '</td>' +
+                        '<td class="text-center">' + material.Transaction_type + '</td>' +
+						'<td class="text-center">' + material.update_at + '</td>' +
 						'</tr>';
 					$tbody.append(row);
 				});
