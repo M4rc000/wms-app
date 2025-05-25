@@ -154,4 +154,20 @@ class Admin extends CI_Controller
 
 		redirect('admin/receiving_wip');
 	}
+
+	public function manage_storage(){
+		$data['title'] = 'Manage Storage';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar');
+		$this->load->view('admin/manage_storage', $data);
+		$this->load->view('templates/footer');
+	}
+public function load_manage_storage(){
+		$manage_storage = $this->AModel->getManageStorage();
+		echo json_encode($manage_storage);
+	}
 }

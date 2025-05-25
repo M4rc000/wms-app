@@ -26,4 +26,21 @@ class Admin_model extends CI_Model {
 		$this->db->where('Id', $id);
 		$this->db->update($table, $Data);
 	}
+
+    public function getManageStorage() {
+        return $this->db->query("SELECT 
+    Material_no,
+    Material_name,
+    Qty,
+    Unit,
+    Transaction_type
+    FROM
+        storage
+    WHERE 
+	    Material_no LIKE '%RW%'
+    GROUP BY 
+        Material_no
+    ORDER BY 
+        Material_no")->result_array();
+    }    
 }
