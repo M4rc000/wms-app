@@ -35,7 +35,7 @@
 					<?php if ($this->session->flashdata('success') != '') { ?>
 						<?= $this->session->flashdata('success'); ?>
 					<?php } ?>
-					<form class="row g-3 needs-validation" method="post" action="<?=base_url('auth')?>">
+					<form class="row g-3 needs-validation" method="post" action="<?=base_url('auth/index')?>">
 						<div class="col-12">
 							<label for="email" class="form-label">Email</label>
 							<div class="input-group has-validation">
