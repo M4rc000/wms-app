@@ -166,8 +166,106 @@ class Admin extends CI_Controller
 		$this->load->view('admin/manage_storage', $data);
 		$this->load->view('templates/footer');
 	}
-public function load_manage_storage(){
+
+	public function load_manage_storage(){
 		$manage_storage = $this->AModel->getManageStorage();
 		echo json_encode($manage_storage);
+	}
+
+	public function demand_forecasting_stock(){
+		$data['title'] = 'Demand Forecast Stock';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('admin/demand_forecast', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function demand_forecast() {
+		$sample1 = $this->input->post('sample1');
+		$sample2 = $this->input->post('sample2');
+		$sample3 = $this->input->post('sample3');
+		$targetMonth = $this->input->post('target'); // Format "YYYY-MM"
+		$date = DateTime::createFromFormat("Y-m", $targetMonth);
+		$formattedDate = $date->format("F Y");
+
+		// Cek apakah sample1, sample2, dan sample3 itu sama
+		if ($sample1 === $sample2 || $sample2 === $sample3 || $sample1 === $sample3) {
+			$this->session->set_flashdata('error_forecasting_stock', "Data Sample 1, 2, dan 3 tidak boleh sama. Silakan pilih tiga bulan historis yang berbeda.");
+			redirect('admin/demand_forecasting_stock');
+			return;
+		}
+
+		$DuplicateMonth = $this->AModel->CheckDuplicateForecast($targetMonth);
+		if($DuplicateMonth){
+			$this->session->set_flashdata('error_forecasting_stock', "Duplikasi untuk Bulan $formattedDate");
+			redirect('admin/demand_forecasting_stock');
+			return;
+		}
+
+		// Ambil daftar material raw
+		$materialList = $this->AModel->getListMaterial();
+
+		// Ambil data historis untuk tiga bulan (dari storage yang sudah di-join)
+		$historicalDataAll = $this->AModel->get_historical_data_multi([$sample1, $sample2, $sample3]);
+		if (empty($historicalDataAll)) {
+			$this->session->set_flashdata('error_forecasting_stock', "Tidak ditemukan data historis untuk bulan $sample1, $sample2, dan $sample3.");
+			redirect('admin/demand_forecasting_stock');
+			return;
+		}
+
+		// Hitung jumlah hari dalam bulan target
+		$forecastDays = date('t', strtotime($targetMonth));
+
+		// Susun data prediksi per hari untuk semua material
+		$forecastData = [];
+		for ($day = 1; $day <= $forecastDays; $day++) {
+			$dailyForecast = ['day' => $day, 'materials' => []];
+			foreach ($materialList as $material) {
+				// Filter historical data untuk material ini
+				$materialNo = $material['Material_no'];
+				$historicalDataMaterial = array_filter($historicalDataAll, function($item) use ($materialNo) {
+					return $item['Material_no'] == $materialNo;
+				});
+				// Jika tidak ada data historis, gunakan 0 (atau Anda bisa skip material)
+				if (empty($historicalDataMaterial)) {
+					$predictedQty = 0;
+				} else {
+					// Urutkan berdasarkan hari (pastikan field 'day' bertipe integer)
+					usort($historicalDataMaterial, function($a, $b) {
+						return intval($a['day']) - intval($b['day']);
+					});
+					// Hitung prediksi menggunakan Linear Regression
+					// Fungsi mengembalikan array forecast untuk periode forecastDays
+					$forecasts = $this->AModel->calculate_linear_regression_forecast_by_material($historicalDataMaterial, $forecastDays);
+					$predictedQty = $forecasts[$day - 1];
+				}
+				// Jika unit adalah Kg, lakukan pembulatan ke bawah
+				if (isset($material['Unit']) && $material['Unit'] === 'Kg') {
+					$predictedQty = floor($predictedQty);
+				}
+
+				$dailyForecast['materials'][] = [
+					'Material_no'   => $material['Material_no'],
+					'Material_name' => $material['Material_name'],
+					'Qty_predict'   => $predictedQty,
+					'unit'          => $material['Unit']
+				];
+			}
+			$forecastData[] = $dailyForecast;
+		}
+
+		// Simpan hasil forecast ke tabel demand_forecast
+		$saveStatus = $this->AModel->save_forecast($targetMonth, $forecastData);
+
+		if ($saveStatus) {
+			$this->session->set_flashdata('success_forecasting_stock', "Prediksi untuk bulan $formattedDate berhasil disimpan.");
+		} else {
+			$this->session->set_flashdata('error_forecasting_stock', "Terjadi kesalahan saat menyimpan prediksi.");
+		}
+
+		redirect('admin/demand_forecasting_stock');	
 	}
 }
