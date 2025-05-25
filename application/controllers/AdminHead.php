@@ -130,6 +130,14 @@ class AdminHead extends CI_Controller {
 	// ACTION
 	// MANAGE USER
 	public function AddUser(){
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Name' => $this->input->post('name'),
 			'Email' => $this->input->post('email'),
@@ -137,7 +145,7 @@ class AdminHead extends CI_Controller {
 			'Role_id' => $this->input->post('role'),
 			'Active' => $this->input->post('active'),
 			'Created_at' => date('d-m-Y H:i'),
-			'Created_by' => $this->input->post('user_id')
+			'Created_by' => $usersession['Id']
 		);
 
 		$this->AHModel->insertData('users', $Data);
@@ -151,7 +159,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'users',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_AddUser', 'New user has been successfully added');
@@ -164,6 +172,14 @@ class AdminHead extends CI_Controller {
 
 	public function EditUser(){
 		$id = $this->input->post('id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Name' => $this->input->post('name'),
 			'Email' => $this->input->post('email'),
@@ -171,7 +187,7 @@ class AdminHead extends CI_Controller {
 			'Role_id' => $this->input->post('role'),
 			'Active' => $this->input->post('active'),
 			'Updated_at' => date('Y-m-d H:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Updated_by' => $usersession['Id']
 		);
 
 		$this->AHModel->updateData('users', $id, $Data);
@@ -184,7 +200,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'users',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $id, $log_data);
 			$this->session->set_flashdata('SUCCESS_EditUser', 'User has been successfully updated');
@@ -198,6 +214,14 @@ class AdminHead extends CI_Controller {
 	public function deleteUser()
 	{
 		$id = $this->input->post('id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$this->AHModel->deleteData('users', $id);
 
 		$check_insert = $this->db->affected_rows();
@@ -209,7 +233,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'users',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_deleteUser', 'User has been successfully deleted');
@@ -226,14 +250,21 @@ class AdminHead extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 		$role = $this->input->post('role');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
 
 		$Data = array(
 			'Id' => $id,
 			'Name' => $role,
 			'Created_at' => date('Y-m-d h:i:s'),
-			'Created_by' => $this->input->post('user_id'),
+			'Created_by' => $usersession['Id'],
 			'Updated_at' => date('Y-m-d h:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Updated_by' => $usersession['Id']
 		);
 
 		$this->AHModel->insertData('user_role', $Data);
@@ -246,7 +277,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_role',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_addRole', 'New role has successfully added');
@@ -261,11 +292,18 @@ class AdminHead extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 		$role = $this->input->post('role');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
 
 		$Data = array(
 			'Name' => $role,
 			'Updated_at' => date('Y-m-d h:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Updated_by' => $usersession['Id']
 		);
 
 		$this->AHModel->updateData('user_role', $id, $Data);
@@ -278,7 +316,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_role',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_updateRole', 'Role has successfully updated');
@@ -293,6 +331,14 @@ class AdminHead extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 		$role = $this->input->post('role');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$this->AHModel->deleteData('user_role', $id);
 
 		$check_insert = $this->db->affected_rows();
@@ -304,7 +350,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_role',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_deleteRole', $role);
@@ -356,6 +402,14 @@ class AdminHead extends CI_Controller {
 	function addRoleAccessMenu()
 	{
 		$role_id = $this->input->post('role_id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$data = [
 			'Role_id' => $role_id,
 			'Menu_id' => $this->input->post('menu_id')
@@ -373,7 +427,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_access_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_ADD_ROLE_ACCESS_MENU', 'New menu Access permissions have been added');
@@ -389,6 +443,14 @@ class AdminHead extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 		$role_id = $this->input->post('role_id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$this->AHModel->deleteData('user_access_menu', $id);
 
 		$check_insert = $this->db->affected_rows();
@@ -399,7 +461,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_access_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_DELETE_ROLE_ACCESS_MENU', 'Menu Access permissions have been deleted');
@@ -414,6 +476,14 @@ class AdminHead extends CI_Controller {
 	function addRoleAccessSubMenu()
 	{
 		$role_id = $this->input->post('role_id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$data = [
 			'Role_id' => $role_id,
 			'Menu_id' => $this->input->post('meenu_id'),
@@ -431,7 +501,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_access_submenu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 	
 			$this->db->insert('log', $log_data);
@@ -449,6 +519,14 @@ class AdminHead extends CI_Controller {
 	{
 		$id = $this->input->post('id');
 		$role_id = $this->input->post('role_id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$this->AHModel->deleteData('user_access_submenu', $id);
 
 		$check_insert = $this->db->affected_rows();
@@ -459,7 +537,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_access_submenu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->db->insert('log', $log_data);
 	
@@ -490,13 +568,19 @@ class AdminHead extends CI_Controller {
 	// MANAGE MENU
 	public function AddMenu()
 	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Id' => $this->input->post('id'),
 			'Name' => $this->input->post('menu'),
 			'Created_at' => date('d-m-Y H:i:s'),
-			'Created_by' => $this->input->post('user_id'),
-			'Updated_at' => date('d-m-Y H:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Created_by' => $usersession['Id']
 		);
 
 		$this->AHModel->insertData('user_menu', $Data);
@@ -510,7 +594,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_AddMenu', 'New menu has been successfully added');
@@ -523,10 +607,18 @@ class AdminHead extends CI_Controller {
 	public function editMenu()
 	{
 		$id = $this->input->post('id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Name' => $this->input->post('menu'),
 			'Updated_at' => date('d-m-Y H:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Updated_by' => $usersession['Id']
 		);
 
 		$this->AHModel->updateData('user_menu', $id, $Data);
@@ -540,7 +632,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_editMenu', 'Menu has been successfully updated');
@@ -554,7 +646,14 @@ class AdminHead extends CI_Controller {
 	public function deleteMenu()
 	{
 		$id = $this->input->post('id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+		
 		$this->AHModel->deleteData('user_menu', $id);
 
 		$check_insert = $this->db->affected_rows();
@@ -566,7 +665,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_deleteMenu', 'Menu has been successfully deleted');
@@ -580,6 +679,14 @@ class AdminHead extends CI_Controller {
 	// MANAGE SUBMENU
 	public function AddSubMenu()
 	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Menu_id' => $this->input->post('menu_id'),
 			'Name' => $this->input->post('name'),
@@ -587,9 +694,7 @@ class AdminHead extends CI_Controller {
 			'Icon' => $this->input->post('icon'),
 			'Active' => $this->input->post('active'),
 			'Created_at' => date('d-m-Y H:i:s'),
-			'Created_by' => $this->input->post('user_id'),
-			'Updated_at' => date('d-m-Y H:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Created_by' => $usersession['Id'],
 		);
 
 		$this->AHModel->insertData('user_sub_menu', $Data);
@@ -602,7 +707,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_sub_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_AddSubMenu', 'New a submenu has been successfully added');
@@ -616,6 +721,14 @@ class AdminHead extends CI_Controller {
 	public function editSubMenu()
 	{
 		$id = $this->input->post('id');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$Data = array(
 			'Menu_id' => $this->input->post('menu_id'),
 			'Name' => $this->input->post('name'),
@@ -623,7 +736,7 @@ class AdminHead extends CI_Controller {
 			'Icon' => $this->input->post('icon'),
 			'Active' => $this->input->post('active'),
 			'Updated_at' => date('d-m-Y H:i:s'),
-			'Updated_by' => $this->input->post('user_id')
+			'Updated_by' => $usersession['Id']
 		);
 
 		$this->AHModel->updateData('user_sub_menu', $id, $Data);
@@ -636,7 +749,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_sub_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_editSubMenu', 'Submenu has been successfully updated');
@@ -649,6 +762,13 @@ class AdminHead extends CI_Controller {
 
 	public function DeleteSubMenu()
 	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
 
 		$id = $this->input->post('id');
 
@@ -662,7 +782,7 @@ class AdminHead extends CI_Controller {
 				'affected_table' => 'user_sub_menu',
 				'queries' => $query_log,
 				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $this->input->post('user_id')
+				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_DeleteSubMenu', 'Submenu has been successfully deleted');
