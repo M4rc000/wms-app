@@ -65,7 +65,9 @@ class Access_model extends CI_Model
 
 	public function getSubMenuId($submenu_name)
 	{
-		$this->db->like('Name', $submenu_name);
+		$formatted_name = ucwords(str_replace('_', ' ', $submenu_name));
+
+		$this->db->where('Name', $formatted_name);
 		$this->db->select('Id');
 
 		$query = $this->db->get('user_sub_menu');
