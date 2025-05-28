@@ -9,7 +9,7 @@
 
 	<div class="d-flex align-items-center justify-content-between">
 		<a href="" class="logo d-flex align-items-center">
-			<img src="<?= base_url('assets') ?>/img/valeo.png" alt="">
+			<img src="<?= base_url('assets') ?>/img/CKC.png" alt="">
 		</a>
 		<i class="bi bi-list toggle-sidebar-btn"></i>
 	</div><!-- End Logo -->

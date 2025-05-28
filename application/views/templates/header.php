@@ -8,7 +8,7 @@
 	<title><?= $title; ?> | Inventory Management System</title>
 
 	<!-- Favicons -->
-	<link href="<?= base_url('assets'); ?>/img/valeo.png" rel="icon">
+	<link href="<?= base_url('assets'); ?>/img/CKC.png" rel="icon">
 	<!-- <link href="<?= base_url('assets'); ?>/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
 
 	<!-- Google Fonts -->
