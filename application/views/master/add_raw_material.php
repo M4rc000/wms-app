@@ -4,13 +4,6 @@
 			<div class="container mx-2 mt-5">
 				<form method="post" action="<?=base_url('master/new_raw_material');?>">
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label"><strong>Material No</strong></label>
-						<div class="col-sm-4">
-							<input type="text" class="form-control" name="Material_no" id="Material_no" required>
-						</div>
-					</div>
-					
-					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label"><strong>Material Name</strong></label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="Material_name" id="Material_name" required>

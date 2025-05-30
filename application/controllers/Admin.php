@@ -31,6 +31,14 @@ class Admin extends CI_Controller
 
 	public function addReceivingRawMaterial()
 	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+		
 		$materials = $this->input->post('materials');
 		if (empty($materials)) {
 			$this->session->set_flashdata('ERROR', 'No materials provided.');
@@ -51,9 +59,9 @@ class Admin extends CI_Controller
 				'Unit'             => $material['Unit'],
 				'Transaction_type' => $material['Transaction_type'],
 				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $this->input->post('user_id'),
+				'Created_by'       => $usersession['Id'],
 				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $this->input->post('user_id')
+				'Updated_by'       => $usersession['Id']
 			];
 
 			$this->AModel->insertData('storage', $DataReceivingRaw);
@@ -66,7 +74,7 @@ class Admin extends CI_Controller
 					'affected_table' => 'storage',
 					'queries'        => $query_log,
 					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $this->input->post('user_id')
+					'Created_by'     => $usersession['Id']
 				];
 				$this->db->insert('log', $log_data);
 				$successfulInserts++;
@@ -100,6 +108,14 @@ class Admin extends CI_Controller
 	}
 
 	public function addReceivingWIPMaterial(){
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$materials = $this->input->post('materials');
 		if (empty($materials)) {
 			$this->session->set_flashdata('ERROR', 'No materials provided.');
@@ -120,9 +136,9 @@ class Admin extends CI_Controller
 				'Unit'             => $material['Unit'],
 				'Transaction_type' => $material['Transaction_type'],
 				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $this->input->post('user_id'),
+				'Created_by'       => $usersession['Id'],
 				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $this->input->post('user_id')
+				'Updated_by'       => $usersession['Id']
 			];
 
 			$this->AModel->insertData('storage', $DataReceivingWip);
@@ -135,7 +151,7 @@ class Admin extends CI_Controller
 					'affected_table' => 'storage',
 					'queries'        => $query_log,
 					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $this->input->post('user_id')
+					'Created_by'     => $usersession['Id']
 				];
 				$this->db->insert('log', $log_data);
 				$successfulInserts++;
@@ -168,6 +184,14 @@ class Admin extends CI_Controller
 	}
 
 	public function addDeliveryItem(){
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
 		$delivery = $this->input->post('delivery');
 		if (empty($delivery)) {
 			$this->session->set_flashdata('ERROR', 'No delivery provided.');
@@ -190,9 +214,9 @@ class Admin extends CI_Controller
 				'Driver_id' 	   => $delivery['Driver_id'],
 				'Delivery_date'    => $delivery['Delivery_date'],
 				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $this->input->post('user_id'),
+				'Created_by'       => $usersession['Id'],
 				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $this->input->post('user_id')
+				'Updated_by'       => $usersession['Id']
 			];
 
 			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
@@ -205,7 +229,7 @@ class Admin extends CI_Controller
 					'affected_table' => 'dispatch_note',
 					'queries'        => $query_log,
 					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $this->input->post('user_id')
+					'Created_by'     => $usersession['Id']
 				];
 				$this->db->insert('log', $log_data);
 				$successfulInserts++;
