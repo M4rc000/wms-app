@@ -38,11 +38,11 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
-
-
-	<!-- JQUERY -->
+  
+  
+  <!-- JQUERY -->
 	<script src="<?= base_url('assets'); ?>/vendor/jquery/jquery.min.js"></script>
-	<script src="<?= base_url('assets/'); ?>vendor/datatables/datatables.js"></script>
+  	<script src="<?= base_url('assets/'); ?>vendor/datatables/datatables.js"></script>
 	<script src="<?= base_url('assets'); ?>/vendor/sweet-alert/sweet-alert.js"></script>
 
 	<script src="<?= base_url('assets'); ?>/vendor/datatables/exports/js/dataTables.js"></script>

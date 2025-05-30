@@ -189,6 +189,26 @@ class Admin_model extends CI_Model {
 			GROUP BY 
 				Material_no
 			ORDER BY 
-				Material_no")->result_array();
+		Material_no")->result_array();
     }    
+
+	public function getDeliveryItem(){
+		return $this->db->query("SELECT 
+			Id,
+			Product_no,
+			Product_name,
+			Qty,
+			Unit,
+			Active,
+			Status,
+			Driver_id,
+			Delivery_date
+			FROM
+				dispatch_note")->result_array();
+	}
+
+	public function getDeliveryById($id)
+    {
+        return $this->db->get_where('dispatch_note', ['id' => $id])->row_array();
+    }
 }

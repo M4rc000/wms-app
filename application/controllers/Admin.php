@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
+require 'vendor/autoload.php';
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Admin extends CI_Controller
 {
@@ -266,6 +270,11 @@ class Admin extends CI_Controller
 		echo json_encode($manage_storage);
 	}
 
+	public function load_delivery_item(){
+		$delivery_item = $this->AModel->getDeliveryItem();
+		echo json_encode($delivery_item);
+	}
+
 	public function demand_forecasting_stock(){
 		$data['title'] = 'Demand Forecast Stock';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
@@ -361,5 +370,27 @@ class Admin extends CI_Controller
 		}
 
 		redirect('admin/demand_forecasting_stock');	
+	}
+	
+	public function print_delivery_pdf($id){
+		// Ambil data berdasarkan ID
+		$delivery = $this->AModel->getDeliveryById($id);
+		
+		if (!$delivery) {
+			$this->session->set_flashdata('ERROR', "Data is not found.");
+			redirect('admin/delivery_item');	
+		}
+
+		// Kirim ke view
+		$data = [
+			'delivery' => $delivery
+		];
+
+		$html = $this->load->view('pdf/pdf_delivery_view', $data, true);
+
+		$this->pdf->loadHtml($html);
+		$this->pdf->setPaper('A4', 'portrait');
+		$this->pdf->render();
+		$this->pdf->stream('surat_jalan_' . $id . '.pdf', ["Attachment" => false]);
 	}
 }

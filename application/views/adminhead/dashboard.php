@@ -17,7 +17,7 @@
 			<div class="row d-flex justify-content-center mt-2">
 				<div class="col-md-3">
                   <label for="Material_name" class="form-label"><strong>Material Name</strong></label>
-                  <select id="Material_name" class="form-select">
+                  <select id="Material_name" class="form-select" id="multiple-select-field">
 					  	<option value="">Choose material</option>
 					  	<?php foreach($material_name as $mn): ?>
 						<option value="<?=$mn['Material_no'];?>"><?=$mn['Material_name'];?></option>

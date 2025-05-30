@@ -24,11 +24,10 @@
 						</button>
 					</div>
 				</div>
-				<?= form_open_multipart('adminr/addDeliveryItem'); ?>
 					<div class="row mt-2 mx-2">
 						<div class="col-12">
 							<div class="table-responsive">
-								<table id="bomTable" class="table table-bordered">
+								<table id="delivery-item-table" class="table table-bordered">
 									<thead>
 										<tr>
 											<th class="text-center">#</th>
@@ -39,136 +38,97 @@
 											<th class="text-center">Status</th>
 											<th class="text-center">Driver ID</th>
                                             <th class="text-center">Delivery Date</th>
+                                            <th class="text-center">Action</th>
 										</tr>
 									</thead>
-									<input type="text" name="user_id" id="user_id" value="<?= $user['Id']; ?>" hidden>
-									<tbody id="table-body"></tbody>
+									<tbody id="tbody-delivery-item"></tbody>
 								</table>
 							</div>
 						</div>
 					</div>
-					<div class="row mt-3 mx-2 mb-3">
-						<div class="col-12 text-end">
-							<button type="submit" class="btn btn-success">Submit</button>
-						</div>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>
 </section>
 
+<!-- SPINNER LOADING -->
+<div class="spinner-container" id="spinner-container">
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
+
+<script src="<?= base_url('assets'); ?>/js/functions.js"></script>
 <script>
-	
 	$(document).ready(function() {
-		// Add new row on button click
-		let rowIndex = 1;
+		$('#spinner-container').show();
 
-		$('#add-row-btn').click(function() {
-			addRow();
-		});
+		$.ajax({
+			url: '<?= base_url('admin/load_delivery_item'); ?>',
+			type: 'get',
+			dataType: 'json',
+			data: {},
+			success: function(res) {
+				$('#spinner-container').hide();
 
-		$(document).on('click', '.btn-remove-row', function() {
-			$(this).closest('tr').remove();
-			updateRowIndices();
-		});
+				var $tbody = $('#tbody-delivery-item');
 
-		function addRow() {
-			var material_list = <?= json_encode($materials); ?>;
-			let materialOptions = '<option value="" selected>Select Material No</option>';
-			material_list.forEach(ml => {
-				materialOptions += `<option value="${ml.Material_no}">${ml.Material_no}</option>`;
-			});
-
-			const newRow = `
-                <tr>
-                    <td class="py-3"><b>${rowIndex}</b></td>
-                    <td>
-						<select class="form-select material-select w-full" name="materials[${(rowIndex-1)}][Material_no]" required>
-                            ${materialOptions}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Material_name]" aria-label="Material Description" readonly>
-                    </td>
-                    <td>
-						<select class="form-select transaction-type w-full text-center" name="materials[${(rowIndex-1)}][Transaction_type]" required>
-							<option value="">Choose Type</option>
-							<option value="In">In</option>
-							<option value="Out">Out</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-qty w-full text-center" name="materials[${rowIndex}][Qty]" aria-label="Quantity" required>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-unit text-center w-full" name="materials[${rowIndex}][Unit]" aria-label="Unit of Measure" readonly>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn btn-danger btn-remove-row w-full" type="button" aria-label="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-			$('#table-body').append(newRow);
-			updateRowIndices();
-
-			$('.material-select').select2({
-				width: '100%'
-			});
-			$('.transaction-type').select2({
-				width: '100%'
-			});
-
-
-			$('.material-select').last().change(function() {
-				const selectedMaterialId = $(this).val();
-				const selectedMaterial = material_list.find(ml => ml.Material_no == selectedMaterialId);
-
-				if (selectedMaterial) {
-					$(this).closest('tr').find('.material-name').val(selectedMaterial.Material_name);
-					$(this).closest('tr').find('.material-unit').val(selectedMaterial.Unit);
-				}
-			});
-			rowIndex++;
-		}
-
-		function updateRowIndices() {
-			$('#table-body tr').each(function(index) {
-				$(this).find('td:first-child b').text(index + 1);
-				$(this).find('input').each(function() {
-					const name = $(this).attr('name');
-					const newName = name.replace(/\[\d+\]/, `[${index}]`);
-					$(this).attr('name', newName);
+				// Loop over the data and build table rows
+				$.each(res, function(index, delivery) {
+					var row = '<tr>' +
+						'<td class="text-center">' + (index + 1) + '</td>' +
+						'<td class="text-start">' + delivery.Product_no + '</td>' +
+						'<td class="text-left">' + delivery.Product_name + '</td>' +
+						'<td class="text-left">' + delivery.Qty + '</td>' +
+						'<td class="text-left">' + delivery.Unit + '</td>' +
+						'<td class="text-left">' + delivery.Status + '</td>' +
+						'<td class="text-left">' + delivery.Driver_id + '</td>' +
+						'<td class="text-left">' + delivery.Delivery_date + '</td>' +
+						'<td class="text-center">' +
+							'<button class="btn btn-sm btn-danger generate-pdf-btn" data-id="' + delivery.Id + '">' +
+								'<i class="bi bi-file-earmark-pdf"></i>' +
+							'</button>' +
+						'</td>'
+						'</tr>';
+					$tbody.append(row);
 				});
-			});
-			rowIndex = $('#table-body tr').length;
-		}
+
+				// Transform the table into a DataTable
+				$('#tbl-report-raw').DataTable({
+					columnDefs: [{
+							targets: 1,
+							className: 'text-start'
+						} // Force left alignment on column 1
+					],
+					layout: {
+						topStart: {
+							buttons: [{
+								extend: 'excel',
+								text: '<i class="bx bx-table"></i> Excel',
+								className: 'btn-custom-excel'
+							}]
+						}
+					}
+				});
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				console.error(xhr.statusText);
+			}
+		});
+
+		$(document).on('click', '.generate-pdf-btn', function() {
+			const id = $(this).data('id');
+			window.open('<?= base_url("admin/print_delivery_pdf/"); ?>' + id, '_blank');
+		});
 	});
 </script>
 
-
-<?php if ($this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW')): ?>
-	<script>
-		Swal.fire({
-			title: "Success",
-			html: `<?= $this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW'); ?>`,
-			icon: "success"
-		});
-	</script>
-<?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_RAW')): ?>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			Swal.fire({
-				title: "Error",
-				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_RAW'); ?>`,
-				icon: "error"
-			});
-		});
-	</script>
-<?php endif; ?>
 <?php if ($this->session->flashdata('ERROR')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
