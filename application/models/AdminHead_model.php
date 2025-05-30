@@ -74,4 +74,220 @@ class AdminHead_model extends CI_Model {
             WHERE user_access_submenu.Role_id = '$role_id'
             ORDER BY role_id")->result_array();
 	}
+
+	public function get_material_receiving($material_no, $period){
+		if (empty($period)) {
+			$period = date("Y");
+		}
+
+		$material_details = [];
+
+		// Get all relevant material_no based on filter
+		if ($material_no !== 'All') {
+			$this->db->select('Material_no');
+			$this->db->from('storage');
+			$this->db->where('Transaction_type', 'In');
+			$this->db->where('Material_no', $material_no);
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		} else {
+			$this->db->select('Material_no');
+			$this->db->from('storage');
+			$this->db->where('Transaction_type', 'In');
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		}
+
+		foreach ($results as $row) {
+			$mat_no = $row['Material_no'];
+
+			$monthly_qty = array_fill(0, 12, 0); 
+
+			// Get monthly quantity per material
+			$this->db->select("MONTH(Created_at) as month, SUM(Qty) as total_qty");
+			$this->db->from('storage');
+			$this->db->where('Material_no', $mat_no);
+			$this->db->where('Transaction_type', 'In');
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('MONTH(Created_at)');
+			$qty_result = $this->db->get()->result_array();
+
+			foreach ($qty_result as $q) {
+				$month_index = intval($q['month']) - 1;
+				$monthly_qty[$month_index] = floatval($q['total_qty']);
+			}
+
+			// Get material details
+			if (strpos($mat_no, 'RW') !== false) {
+				$detail = $this->db->get_where('raw_material', ['Material_no' => $mat_no])->row();
+			} else {
+				$detail = $this->db->get_where('wip_material', ['Material_no' => $mat_no])->row();
+			}
+
+			if (!$detail) {
+				$detail = (object)[
+					'Material_no' => $mat_no,
+					'Unit'        => '',
+					'Material_name' => 'N/A'
+				];
+			}
+
+			$material_details[] = [
+				'Material_no'  => $mat_no,
+				'Unit'         => $detail->Unit ?? '',
+				'name'         => $detail->Material_name ?? 'N/A',
+				'monthly_qty'  => $monthly_qty
+			];
+		}
+
+		return $material_details;
+	}
+
+	public function get_material_usage($material_no, $period){
+		if (empty($period)) {
+			$period = date("Y");
+		}
+
+		$material_details = [];
+
+		// Get all relevant material_no based on filter
+		if ($material_no !== 'All') {
+			$this->db->select('Material_no');
+			$this->db->from('storage');
+			$this->db->where('Transaction_type', 'Out');
+			$this->db->where('Material_no', $material_no);
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		} else {
+			$this->db->select('Material_no');
+			$this->db->from('storage');
+			$this->db->where('Transaction_type', 'Out');
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		}
+
+		foreach ($results as $row) {
+			$mat_no = $row['Material_no'];
+
+			$monthly_qty = array_fill(0, 12, 0); // Jan to Dec
+
+			// Get monthly quantity per material
+			$this->db->select("MONTH(Created_at) as month, SUM(Qty) as total_qty");
+			$this->db->from('storage');
+			$this->db->where('Material_no', $mat_no);
+			$this->db->where('Transaction_type', 'Out');
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('MONTH(Created_at)');
+			$qty_result = $this->db->get()->result_array();
+
+			foreach ($qty_result as $q) {
+				$month_index = intval($q['month']) - 1; // 0-based index
+				$monthly_qty[$month_index] = floatval($q['total_qty']);
+			}
+
+			// Get material details
+			if (strpos($mat_no, 'RW') !== false) {
+				$detail = $this->db->get_where('raw_material', ['Material_no' => $mat_no])->row();
+			} else {
+				$detail = $this->db->get_where('wip_material', ['Material_no' => $mat_no])->row();
+			}
+
+			if (!$detail) {
+				$detail = (object)[
+					'Material_no' => $mat_no,
+					'Unit'        => '',
+					'Material_name' => 'N/A'
+				];
+			}
+
+			$material_details[] = [
+				'Material_no'  => $mat_no,
+				'Unit'         => $detail->Unit ?? '',
+				'name'         => $detail->Material_name ?? 'N/A',
+				'monthly_qty'  => $monthly_qty
+			];
+		}
+
+		return $material_details;
+	}
+
+	public function get_demand_forecast($material_no, $period){
+		if (empty($period)) {
+			$period = date("Y");
+		}
+
+		$material_details = [];
+
+		// Get all relevant material_no based on filter
+		if ($material_no !== 'All') {
+			$this->db->select('Material_no');
+			$this->db->from('demand_forecast');
+			$this->db->where('Material_no', $material_no);
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		} else {
+			$this->db->select('Material_no');
+			$this->db->from('demand_forecast');
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('Material_no');
+			$results = $this->db->get()->result_array();
+		}
+
+		foreach ($results as $row) {
+			$mat_no = $row['Material_no'];
+
+			$monthly_qty = array_fill(0, 12, 0); // Jan to Dec
+
+			// Get monthly quantity per material
+			$this->db->select("MONTH(Created_at) as month, SUM(Qty_predict) as total_qty");
+			$this->db->from('demand_forecast');
+			$this->db->where('Material_no', $mat_no);
+			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->group_by('MONTH(Created_at)');
+			$qty_result = $this->db->get()->result_array();
+
+			foreach ($qty_result as $q) {
+				$month_index = intval($q['month']) - 1; // 0-based index
+				$monthly_qty[$month_index] = floatval($q['total_qty']);
+			}
+
+			// Get material details
+			if (strpos($mat_no, 'RW') !== false) {
+				$detail = $this->db->get_where('raw_material', ['Material_no' => $mat_no])->row();
+			} else {
+				$detail = $this->db->get_where('wip_material', ['Material_no' => $mat_no])->row();
+			}
+
+			if (!$detail) {
+				$detail = (object)[
+					'Material_no' => $mat_no,
+					'Unit'        => '',
+					'Material_name' => 'N/A'
+				];
+			}
+
+			$material_details[] = [
+				'Material_no'  => $mat_no,
+				'Unit'         => $detail->Unit ?? '',
+				'name'         => $detail->Material_name ?? 'N/A',
+				'monthly_qty'  => $monthly_qty
+			];
+		}
+
+		return $material_details;
+	}
+
+	public function get_material_list() {
+		$sql = "
+			SELECT Material_no, Material_name FROM raw_material
+			UNION
+			SELECT Material_no, Material_name FROM wip_material
+		";
+		return $this->db->query($sql)->result_array();
+	}
 }

@@ -58,6 +58,10 @@
 			color: white !important;
 			border: 1px solid white;
 		}
+
+		input{
+			border-color: rgb(170,170,170) !important;
+		}
 	</style>
 </head>
 

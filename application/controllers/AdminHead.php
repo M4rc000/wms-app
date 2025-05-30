@@ -15,14 +15,45 @@ class AdminHead extends CI_Controller {
     }
 	
 	public function dashboard(){
-        $data['title'] = 'Dashboard';
-        $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-        
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/navbar', $data);   
-        $this->load->view('templates/sidebar', $data);   
-        $this->load->view('adminhead/dashboard', $data);
-        $this->load->view('templates/footer');
+		$data['title'] = 'Dashboard';
+		$data['user'] = $this->db->get_where('users', [
+			'Email' => $this->session->userdata('email')
+		])->row_array();
+		
+		$data['material_name'] = $this->AHModel->get_material_list();
+		
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);   
+		$this->load->view('templates/sidebar', $data);   
+		$this->load->view('adminhead/dashboard', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function load_material_receiving(){
+		$material_no = $this->input->post('material_no');
+		$period = $this->input->post('period');
+
+		$materials = $this->AHModel->get_material_receiving($material_no, $period);
+
+		echo json_encode($materials);
+	}
+
+	public function load_material_usage(){
+		$material_no = $this->input->post('material_no');
+		$period = $this->input->post('period');
+
+		$materials = $this->AHModel->get_material_usage($material_no, $period);
+
+		echo json_encode($materials);
+	}
+
+	public function load_demand_forecast(){
+		$material_no = $this->input->post('material_no');
+		$period = $this->input->post('period');
+
+		$materials = $this->AHModel->get_demand_forecast($material_no, $period);
+
+		echo json_encode($materials);
 	}
 
 	public function manage_user()

@@ -81,7 +81,9 @@
 						<label for="menu_id" class="form-label">Menu ID</label>
 						<select id="menu_id" class="form-select" required name="menu_id">
 							<?php foreach ($menus as $menu) : ?>
-								<option value="<?= $menu['Id']; ?>"><?= $menu['Id']; ?> | <?= $menu['Name']; ?></option>
+								<option value="<?= $menu['Id']; ?>" data-url="<?= strtolower(str_replace(' ', '', $menu['Name'])); ?>/">
+									<?= $menu['Id']; ?> | <?= $menu['Name']; ?>
+								</option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -138,7 +140,11 @@
 							<label for="menu_id" class="form-label">Menu ID</label>
 							<select id="menu_id" class="form-select" required name="menu_id">
 								<?php foreach ($menus as $menu): ?>
-									<option <?= $menu['Id'] == $sb['Menu_id'] ? 'selected' : ''; ?> value="<?= $menu['Id']; ?>"><?= $menu['Name'] ?></option>
+									<option <?= $menu['Id'] == $sb['Menu_id'] ? 'selected' : ''; ?> 
+											value="<?= $menu['Id']; ?>" 
+											data-url="<?= strtolower(str_replace(' ', '', $menu['Name'])); ?>/">
+										<?= $menu['Name'] ?>
+									</option>
 								<?php endforeach; ?>
 							</select>
 							<input type="text" class="form-control" id="id" name="id" value="<?= $sb['Id']; ?>" hidden>
@@ -210,6 +216,26 @@
 
 <script>
 	$(document).ready(function() {
+		$('#addModal').on('shown.bs.modal', function() {
+			$('#menu_id').on('change', function() {
+				var selectedOption = $(this).find('option:selected');
+				var autoUrl = selectedOption.data('url');
+				if (autoUrl) {
+					$('#url').val(autoUrl);
+				}
+			});
+		});
+
+		$('#editModal').on('shown.bs.modal', function() {
+			$('#menu_id').on('change', function() {
+				var selectedOption = $(this).find('option:selected');
+				var autoUrl = selectedOption.data('url');
+				if (autoUrl) {
+					$('#url').val(autoUrl);
+				}
+			});
+		});
+
 		$('.modal').on('shown.bs.modal', function() {
 			// Target only the input inside the currently opened modal
 			$(this).find('#icon').on('input', function() {
@@ -226,8 +252,17 @@
 			$(this).find('#menu_id').select2({
 				dropdownParent: $(this)
 			});
+
 			$(this).find('#active').select2({
 				dropdownParent: $(this)
+			});
+
+			$('select[name="menu_id"]').on('change', function () {
+				var selectedOption = $(this).find('option:selected');
+				var url = selectedOption.data('url');
+				
+				var modal = $(this).closest('.modal');
+				modal.find('input[name="url"]').val(url);
 			});
 		});
 	});
