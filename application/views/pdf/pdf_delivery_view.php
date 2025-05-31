@@ -1,136 +1,157 @@
+<?php
+	$Date = date('d F Y', strtotime($delivery[0]['Delivery_date']));
+	$logo_path = FCPATH . 'assets/img/CKC.png';
+	$logo_data = base64_encode(file_get_contents($logo_path));
+	$logo_type = pathinfo($logo_path, PATHINFO_EXTENSION);
+	$logo_src = 'data:image/' . $logo_type . ';base64,' . $logo_data;
+?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>SURAT JALAN</title>
-  <link href="<?= base_url('assets'); ?>/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       font-family: Arial, sans-serif;
       font-size: 12px;
     }
-    .company-left {
-      font-weight: bold;
+
+    .header {
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
 
-    .company-right {
-      text-align: right;
-      font-size: 12px;
-    }
-
-    h2 {
+    .header-left {
+      float: left;
+      width: 65%;
       text-align: center;
-      margin-bottom: 10px;
+    }
+
+    .header-right {
+      float: right;
+      width: 35%;
+      font-size: 12px;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .header-left img {
+      width: 110px;
+    }
+
+    .header-left .company-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 5px;
     }
 
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
+      margin-top: 40px;
+      margin-bottom: 10px;
+			border-collapse: collapse;
     }
 
-    th, td {
+    th.letter, td.letter {
       border: 1px solid black;
       padding: 6px;
       text-align: center;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+
+    th[colspan="6"] {
+      font-size: 18px;
+    }
+
+    .signature-row td {
+      height: 70px;
     }
   </style>
 </head>
 <body>
 
-<div class="row align-items-center">
-    <!-- Logo Kiri -->
-    <div class="col-md-5 offset-md-2 text-center">
-		<div class="row align-items-center">
-			<div class="col-md text-center">
-				<img src="<?= base_url('assets/img/CKC.png') ?>" alt="Logo" style="width: 110px; height: auto;">
-			</div>
-			<div class="col-md-9 text-center">
-				<h5 style="font-weight: bold; margin: 0; padding: 0;">PT CAHAYA KAROMAH CEMERLANG</h5>
-			</div>
-		</div>
-    </div>
+<table style="width: 100%; margin-bottom: 5px;">
+  <tr>
+    <!-- Logo kiri -->
+    <td style="width: 10%; text-align: left;">
+      <img src="<?= $logo_src ?>" alt="Logo" style="width: 100px;">
+    </td>
 
-    <!-- Info Surat Jalan Kanan -->
-    <div class="col-md-3 text-end" style="font-size: 14px; line-height: 1.6;">
-        PT. BERLINDO MITRA UTAMA<br>
-        NO SJ : CKC/SJ/025/05/2025<br>
-        DATE : 28 MEI 2025<br>
-        NO. PO : SO174/0625/BMU/SCSJ
-    </div>
-</div>
+    <!-- Nama perusahaan tengah -->
+    <td style="width: 60%; text-align: center;">
+      <span style="font-weight: bold; font-size: 17px; letter-spacing: 1.5px;">PT CAHAYA KAROMAH CEMERLANG</span>
+    </td>
 
-<table>
+    <!-- Info surat jalan kanan -->
+    <td style="width: 30%; text-align: right; font-size: 10px;">
+      PT. BERLINDO MITRA UTAMA<br>
+      NO SJ : CKC/SJ/025/05/2025<br>
+      DATE : <?=$Date;?><br>
+      NO. PO : SO174/0625/BMU/SCSJ
+    </td>
+  </tr>
+</table>
+
+<table class="letter">
   <thead>
-	<tr>
-      <th colspan="6" style="text-align: center; font-size: 20px;">SURAT JALAN</th>
+    <tr>
+      <th class="letter" colspan="6">SURAT JALAN</th>
     </tr>
     <tr>
-      <th>NO</th>
-      <th>PART NUMBER</th>
-      <th>PART NAME</th>
-      <th>QTY</th>
-      <th>UNIT</th>
-      <th>REMAKS</th>
+      <th class="letter" style="width: 7%;">NO</th>
+      <th class="letter" style="width: 20%;">PART NUMBER</th>
+      <th class="letter" style="width: 35%;">PART NAME</th>
+      <th class="letter" style="width: 13%;">QTY</th>
+      <th class="letter" style="width: 13%;">UNIT</th>
+      <th class="letter" style="width: 20%;">REMAKS</th>
     </tr>
   </thead>
   <tbody>
+		<?php $number = 0; foreach($delivery as $dl): $number++;?>
     <tr>
-      <td>1</td>
-      <td>S0870-JM050</td>
-      <td>Support Sub Assy Step RH</td>
-      <td>24</td>
-      <td>PCS</td>
-      <td></td>
+      <td class="letter"><?=$number;?></td>
+      <td class="letter"><?=$dl['Product_no'];?></td>
+      <td class="letter"><?=$dl['Product_name'];?></td>
+      <td class="letter"><?=$dl['Qty'];?></td>
+      <td class="letter"><?=$dl['Unit'];?></td>
+      <td class="letter"></td>
     </tr>
-    <tr>
-      <td>2</td>
-      <td>S0870-JM050</td>
-      <td>Support Sub Assy Step LH</td>
-      <td>24</td>
-      <td>PCS</td>
-      <td></td>
-    </tr>
+		<?php endforeach; ?>
     <!-- Baris kosong sampai 10 -->
-    <tr><td>3</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>4</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>5</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>6</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>7</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>8</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>9</td><td></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>10</td><td></td><td></td><td></td><td></td><td></td></tr>
-  <tr>
-    <td colspan="2">DIBUAT</td>
-    <td>DIKETAHUI</td>
-    <td>DISETUJUI</td>
-    <td>SECURITY</td>
-    <td>DITERIMA</td>
-  </tr>
-  <tr>
-    <td colspan="2" style="height: 70px;">
-      <br><br>
-    </td>
-    <td>
-		<br><br>
-	</td>
-    <td style="height: 70px;">
-      <br><br>
-    </td>
-    <td>
-		<br><br>
-	</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td colspan="2">PPIC</td>
-    <td>PPIC</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
+    <?php for ($i = 3; $i <= 10; $i++): ?>
+    <tr>
+      <td class="letter"><?= $i ?></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+    </tr>
+    <?php endfor; ?>
+    <tr>
+      <td class="letter" colspan="2">DIBUAT</td>
+      <td class="letter">DIKETAHUI</td>
+      <td class="letter">DISETUJUI</td>
+      <td class="letter">SECURITY</td>
+      <td class="letter">DITERIMA</td>
+    </tr>
+    <tr class="signature-row">
+      <td class="letter" colspan="2"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+    </tr>
+    <tr>
+      <td class="letter" colspan="2">PPIC</td>
+      <td class="letter">PPIC</td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+      <td class="letter"></td>
+    </tr>
   </tbody>
 </table>
-
 </body>
 </html>

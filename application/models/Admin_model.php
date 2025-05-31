@@ -209,6 +209,6 @@ class Admin_model extends CI_Model {
 
 	public function getDeliveryById($id)
     {
-        return $this->db->get_where('dispatch_note', ['id' => $id])->row_array();
+        return $this->db->get_where('dispatch_note', ['id' => $id])->result_array();
     }
 }

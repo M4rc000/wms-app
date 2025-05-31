@@ -12,3 +12,11 @@ function formatQuantity(qty, unit) {
   // Jika unit bukan liter, kembalikan nilai aslinya atau format sesuai kebutuhan
   return qty;
 }
+
+function formatDateToLong(dateString, locale = 'en-US') {
+  const dateObj = new Date(dateString);
+  if (isNaN(dateObj)) return 'Invalid date';
+
+  const options = { day: '2-digit', month: 'long', year: 'numeric' };
+  return dateObj.toLocaleDateString(locale, options);
+}

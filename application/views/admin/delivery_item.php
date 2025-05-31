@@ -83,13 +83,13 @@
 				$.each(res, function(index, delivery) {
 					var row = '<tr>' +
 						'<td class="text-center">' + (index + 1) + '</td>' +
-						'<td class="text-start">' + delivery.Product_no + '</td>' +
+						'<td class="text-center">' + delivery.Product_no + '</td>' +
 						'<td class="text-left">' + delivery.Product_name + '</td>' +
-						'<td class="text-left">' + delivery.Qty + '</td>' +
-						'<td class="text-left">' + delivery.Unit + '</td>' +
-						'<td class="text-left">' + delivery.Status + '</td>' +
-						'<td class="text-left">' + delivery.Driver_id + '</td>' +
-						'<td class="text-left">' + delivery.Delivery_date + '</td>' +
+						'<td class="text-center">' + delivery.Qty + '</td>' +
+						'<td class="text-center">' + delivery.Unit + '</td>' +
+						'<td class="text-center">' + delivery.Status + '</td>' +
+						'<td class="text-center">' + delivery.Driver_id + '</td>' +
+						'<td class="text-center">' + formatDateToLong(delivery.Delivery_date) + '</td>' +
 						'<td class="text-center">' +
 							'<button class="btn btn-sm btn-danger generate-pdf-btn" data-id="' + delivery.Id + '">' +
 								'<i class="bi bi-file-earmark-pdf"></i>' +

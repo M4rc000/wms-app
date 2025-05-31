@@ -178,13 +178,14 @@ class Admin extends CI_Controller
 	public function delivery_item(){
 		$data['title'] = 'Delivery Item';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-
 		
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('templates/sidebar');
 		$this->load->view('admin/delivery_item', $data);
 		$this->load->view('templates/footer');
+
+		// $this->load->view('pdf/pdf_delivery_view', $data);
 	}
 
 	public function addDeliveryItem(){

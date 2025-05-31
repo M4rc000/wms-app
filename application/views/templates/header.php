@@ -51,7 +51,6 @@
 	<script src="<?= base_url('assets'); ?>/vendor/datatables/exports/js/jszip.min.js"></script>
 	<script src="<?= base_url('assets'); ?>/vendor/datatables/exports/js/buttons.html5.min.js"></script>
 	<script src="<?= base_url('assets'); ?>/vendor/datatables/exports/js/buttons.print.min.js"></script>
-
 	<style>
 		.btn-custom-excel {
 			background-color: #0A6847 !important;
