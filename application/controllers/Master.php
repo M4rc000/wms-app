@@ -220,4 +220,186 @@ class Master extends CI_Controller
 		$this->load->view('master/wip_material', $data);
 		$this->load->view('templates/footer');
 	}
+
+	public function load_wip_material(){
+		$wip_materials = $this->MModel->getWIPMaterials();
+		echo json_encode($wip_materials);
+	}
+
+	public function add_wip_material()
+	{
+		$data['title'] = 'New WIP Material';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar');
+		$this->load->view('master/add_wip_material', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function new_wip_material()
+	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+		$material_no = $this->MModel->generateNewWipMaterialNo();
+		$material_name =  htmlspecialchars($this->input->post('Material_name'));
+		$unit = htmlspecialchars($this->input->post('Unit'));
+		$duplicate_material = $this->MModel->check_duplicate_wip_material($material_name);
+
+
+		if (empty($material_no) || empty($material_name) || empty($unit)) {
+			$this->session->set_flashdata('ERROR', 'No material provided.');
+			redirect('master/wip_material');
+			return;
+		}
+
+		if($duplicate_material > 0){
+			$this->session->set_flashdata('ERROR', 'Data Material is already exists.');
+			redirect('master/wip_material');
+			return;
+		}
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+		
+
+		$successfulInserts = 0;
+
+		// Start a transaction to ensure atomicity
+		$this->db->trans_start();
+
+		$DataReceivingWIP = [
+			'Material_no'      => $material_no,
+			'Material_name'    => $material_name,
+			'Unit'             => $unit,
+			'Created_at'       => date('Y-m-d H:i:s'),
+			'Created_by'       => $usersession['Id'],
+		];
+
+		$this->MModel->insertData('wip_material', $DataReceivingWIP);
+		$check_insert = $this->db->affected_rows();
+
+		if ($check_insert > 0) {
+			// RECORD BOM LOG
+			$query_log = $this->db->last_query();
+			$log_data = [
+				'affected_table' => 'wip_material',
+				'queries'        => $query_log,
+				'Created_at'     => date('Y-m-d H:i:s'),
+				'Created_by'     => $usersession['Id']
+			];
+			$this->db->insert('log', $log_data);
+			$successfulInserts += 1;
+		}
+		
+		// Complete the transaction
+		$this->db->trans_complete();
+
+		// Check if all materials were inserted successfully
+		if ($this->db->trans_status() && $successfulInserts == 1) {
+			$this->session->set_flashdata('SUCCESS_ADD_WIP_MATERIAL', 'New WIP Material added successfully.');
+		} else {
+			$this->session->set_flashdata('FAILED_ADD_WIP_MATERIAL', 'Failed to add new WIP material.');
+		}
+
+		redirect('master/wip_material');
+	}
+
+	public function edit_wip_material($id)
+	{
+		$data['title'] = 'Edit WIP Material';
+		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		$data['materials'] = $this->MModel->getWipMaterialById($id);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/sidebar');
+		$this->load->view('master/edit_wip_material', $data);
+		$this->load->view('templates/footer');
+	}
+
+	public function update_wip_material(){
+		$Material_no = $this->input->post('Material_no');
+		$Material_name = $this->input->post('Material_name');
+		$Unit = $this->input->post('Unit');
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+		$id = $this->input->post('id');
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+		$Data = array(
+			'Material_no' => $Material_no,
+			'Material_name' => $Material_name,
+			'Unit' => $Unit,
+			'Updated_at' => date('Y-m-d H:i:s'),
+			'Updated_by' => $usersession['Id']
+		);
+
+		$this->MModel->updateData('wip_material', $id, $Data);
+		$check_insert = $this->db->affected_rows();
+
+		if ($check_insert > 0) {
+			// LOG
+			$query_log = $this->db->last_query();
+			$log_data = [
+				'affected_table' => 'raw_material',
+				'queries' => $query_log,
+				'Created_at' => date('Y-m-d H:i:s'),
+				'Created_by' => $usersession['Id']
+			];
+			$this->MModel->insertData('log', $log_data);
+			$this->session->set_flashdata('SUCCESS_EDIT_WIP_MATERIAL', 'WIP material successfully updated');
+			
+			$update_storage = $this->MModel->update_data_storage($Material_no, $Unit);
+			$query_log = $this->db->last_query();
+			$log_data = [
+				'affected_table' => 'storage',
+				'queries' => $query_log,
+				'Created_at' => date('Y-m-d H:i:s'),
+				'Created_by' => $usersession['Id']
+			];
+			$this->MModel->insertData('log', $log_data);
+		} else {
+			$this->session->set_flashdata('FAILED_EDIT_WIP_MATERIAL', 'Failed to update a WIP material');
+		}
+
+		redirect('master/wip_material');
+	}
+
+	public function delete_wip_material($id)
+	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
+		$this->MModel->deleteData('wip_material', $id);
+		$check_insert = $this->db->affected_rows();
+
+		if ($check_insert > 0) {
+			// LOG
+			$query_log = $this->db->last_query();
+			$log_data = [
+				'affected_table' => 'wip_material',
+				'queries' => $query_log,
+				'Created_at' => date('Y-m-d H:i:s'),
+				'Created_by' => $usersession['Id']
+			];
+			$this->MModel->insertData('log', $log_data);
+			$this->session->set_flashdata('SUCCESS_DELETE_WIP_MATERIAL', 'WIP Material successfully deleted');
+		} else {
+			$this->session->set_flashdata('FAILED_DELETE_WIP_MATERIAL', 'Failed to delete WIP Material');
+		}
+
+		redirect('master/wip_material');
+	}
 }

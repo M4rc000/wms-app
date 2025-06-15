@@ -1,59 +1,32 @@
-<style>
-	.select2-container {
-		z-index: 9999;
-	}
-
-	.select2-selection {
-		padding-top: 4px !important;
-		height: 38px !important;
-	}
-</style>
-<section class="section">
-	<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addModal" style="color: white">
-		New Raw Material
-	</button>
+<section>
 	<div class="row">
-		<div class="col-lg-12">
+		<div class="col-md-12">
 			<div class="card">
-				<div class="card-body table-responsive mt-2">
-					<table class="table datatable">
+				<div class="card-header">
+					<div class="row mb-3 mx-2 mt-4">
+						<div class="col-12 col-md-3">
+							<a href="<?=base_url();?>master/add_raw_material">
+								<button type="button" class="btn btn-primary w-40" id="add-row-btn">
+									New Raw Material
+								</button>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="card-body pt-3">
+					<table class="table" id="tbl-report-raw">
 						<thead>
 							<tr>
 								<th class="text-center">#</th>
-								<th class="text-center">Material No</th>
-								<th class="text-center">Material Name</th>
+								<th class="text-left">Material No</th>
+								<th class="text-left">Material Name</th>
 								<th class="text-center">Uom</th>
 								<th class="text-center">Action</th>
 							</tr>
 						</thead>
-						<!-- <tbody>
-							<?php $number = 0;
-							foreach ($submenus as $sb) : $number++ ?>
-								<tr class="text-center">
-									<td><?= $number; ?></td>
-									<td>
-										<?php
-										foreach ($menus as $menu) {
-											if ($sb['Menu_id'] == $menu['Id']) {
-												echo $menu['Name'];
-											}
-										}
-										?>
-									</td>
-									<td><?= $sb['Material_no']; ?></td>
-									<td><?= $sb['Material_name']; ?></td>
-									<td><?= $sb['Unit']; ?></td>
-									<td>
-										<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal<?= $sb['Id']; ?>">
-											<i class="bx bxs-edit" style="color: white;"></i>
-										</button>
-										<button class="btn btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $sb['Id']; ?>">
-											<i class="bx bxs-trash"></i>
-										</button>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody> -->
+						<tbody class="tbody-report-raw">
+							<!-- Table rows will be appended here by JavaScript -->
+						</tbody>
 					</table>
 				</div>
 			</div>
@@ -61,258 +34,149 @@
 	</div>
 </section>
 
-<!-- ADD MODAL-->
-<div class="modal fade" id="addModal" tabindex="-1">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<?= form_open_multipart('master/AddRawMaterial'); ?>
-			<div class="modal-header">
-				<h5 class="modal-title">Add Raw Material</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<!-- GET USER ID -->
-				<!-- <input type="text" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>" hidden>
-				<div class="row ps-2">
-					<div class="col-4">
-						<label for="menu_id" class="form-label">Menu ID</label>
-						<select id="menu_id" class="form-select" required name="menu_id">
-							<?php foreach ($menus as $menu) : ?>
-								<option value="<?= $menu['Id']; ?>" data-url="<?= strtolower(str_replace(' ', '', $menu['Name'])); ?>/">
-									<?= $menu['Id']; ?> | <?= $menu['Name']; ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-					<div class="col-4">
-						<label for="name" class="form-label">Name</label>
-						<input type="text" class="form-control" id="name" name="name" required>
-					</div>
-					<div class="col-4">
-						<label for="url" class="form-label">Url</label>
-						<input type="text" class="form-control" id="url" name="url" required>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-primary">Save changes</button>
-			</div>
-			</form>
-		</div>
+
+<!-- SPINNER LOADING -->
+<div class="spinner-container" id="spinner-container">
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
 	</div>
-</div> -->
-
-<!-- EDIT MODAL-->
-<?php foreach ($submenus as $sb) : ?>
-	<div class="modal fade" id="editModal<?= $sb['Id']; ?>" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<?= form_open_multipart('adminhead/EditRawMaterial'); ?>
-				<div class="modal-header">
-					<h5 class="modal-title">Edit Raw Material</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<!-- GET USER ID -->
-					<!-- <input type="text" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>" hidden>
-					<div class="row ps-2">
-						<div class="col-4">
-							<label for="menu_id" class="form-label">Menu ID</label>
-							<select id="menu_id" class="form-select" required name="menu_id">
-								<?php foreach ($menus as $menu): ?>
-									<option <?= $menu['Id'] == $sb['Menu_id'] ? 'selected' : ''; ?> 
-											value="<?= $menu['Id']; ?>" 
-											data-url="<?= strtolower(str_replace(' ', '', $menu['Name'])); ?>/">
-										<?= $menu['Name'] ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-							<input type="text" class="form-control" id="id" name="id" value="<?= $sb['Id']; ?>" hidden>
-						</div>
-						<div class="col-4">
-							<label for="name" class="form-label">Name</label>
-							<input type="text" class="form-control" id="name" name="name" value="<?= $sb['Name']; ?>">
-						</div>
-						<div class="col-4">
-							<label for="url" class="form-label">Url</label>
-							<input type="text" class="form-control" id="url" name="url" value="<?= $sb['Url']; ?>">
-						</div>
-					</div>
-					<div class="row ps-2 mt-4">
-						<div class="col-4">
-							<label for="icon" class="form-label">Icon</label>
-							<div class="input-group mb-3">
-								<span class="input-group-text icon-show" id="basic-addon1"><i class="<?= $sb['Icon']; ?>"></i></span>
-								<input type="text" class="form-control" aria-label="icon" aria-describedby="basic-addon1" id="icon" name="icon" value="<?= $sb['Icon']; ?>">
-							</div>
-						</div>
-						<div class="col-4">
-							<label for="active" class="form-label">Active</label>
-							<select id="active" class="form-select" required name="active">
-								<option <?= $sb['Active'] == 1 ? 'selected' : ''; ?> value="1">Active</option>
-								<option <?= $sb['Active'] == 0 ? 'selected' : ''; ?> value="0">Not active</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="submit" class="btn btn-primary">Save changes</button>
-				</div>
-				</form>
-			</div>
-		</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
 	</div>
-<?php endforeach; ?> -->
-
-<!-- DELETE CONFIRM MODAL-->
-<?php foreach ($submenus as $sb) : ?>
-	<?= form_open_multipart('adminhead/DeleteRawMaterial'); ?>
-	<div class="modal fade" id="deleteModal<?= $sb['Id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title pb-0 mb-0" id="exampleModalLabel">Confirm to delete ?</h4>
-				</div>
-				<div class="modal-body">
-					<!-- GET USER ID -->
-					<input type="text" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>" hidden>
-					<input type="text" name="id" id="id" value="<?= $sb['Id']; ?>" style="display: none;">
-					<p><b>Menu ID</b> : <?= $sb['Menu_id']; ?></p>
-					<p><b>Title</b> : <?= $sb['Name']; ?></p>
-					<p><b>Url</b> : <?= $sb['Url']; ?></p>
-					<p><b>Icon</b> : <i class="<?= $sb['Icon']; ?>"></i></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-primary" name="delete_user">Confirm</button>
-				</div>
-			</div>
-		</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
 	</div>
-	</form>
-<?php endforeach; ?>
+</div>
 
-
+<script src="<?= base_url('assets'); ?>/js/functions.js"></script>
 <script>
 	$(document).ready(function() {
-		$('#addModal').on('shown.bs.modal', function() {
-			$('#menu_id').on('change', function() {
-				var selectedOption = $(this).find('option:selected');
-				var autoUrl = selectedOption.data('url');
-				if (autoUrl) {
-					$('#url').val(autoUrl);
-				}
-			});
-		});
+		$('#spinner-container').show();
 
-		$('#editModal').on('shown.bs.modal', function() {
-			$('#menu_id').on('change', function() {
-				var selectedOption = $(this).find('option:selected');
-				var autoUrl = selectedOption.data('url');
-				if (autoUrl) {
-					$('#url').val(autoUrl);
-				}
-			});
-		});
+		$.ajax({
+			url: '<?= base_url('master/load_raw_material'); ?>',
+			type: 'get',
+			dataType: 'json',
+			data: {},
+			success: function(res) {
+				$('#spinner-container').hide();
 
-		$('.modal').on('shown.bs.modal', function() {
-			// Target only the input inside the currently opened modal
-			$(this).find('#icon').on('input', function() {
-				var iconValue = $(this).val();
-				$(this).closest('.modal').find('.icon-show').html('<i class="' + iconValue + '"></i>');
-			});
+				var $tbody = $('.tbody-report-raw');
 
-			$(this).find('#icon').on('change', function() {
-				var iconValue = $(this).val();
-				$(this).closest('.modal').find('.icon-show').html('<i class="' + iconValue + '"></i>');
-			});
+				// Loop over the data and build table rows
+				$.each(res, function(index, material) {
+					var row = `<tr>
+						<td class="text-center">${(index + 1)}</td>
+						<td class="text-start">${material.Material_no}</td>
+						<td class="text-left">${material.Material_name}</td>
+						<td class="text-center">${material.Unit}</td>
+						<td class="text-center">
+							<a href="<?=base_url('master/');?>edit_raw_material/${material.Id}">
+								<span class="badge bg-warning badge-hover" style=":hover{cursor: pointer;}">
+									<i class="bx bxs-edit" style="color: white;"></i>
+								</span>
+							</a>
+							<a href="<?=base_url('master/');?>delete_raw_material/${material.Id}">
+								<span class="badge bg-danger badge-hover" style=":hover{cursor: pointer;}">
+									<i class="bx bxs-trash"></i>
+								</span>
+							</a>
+						</td>
+						</tr>`;
+					$tbody.append(row);
+				});
 
-			// Ensure select2 dropdown works within the current modal
-			$(this).find('#menu_id').select2({
-				dropdownParent: $(this)
-			});
-
-			$(this).find('#active').select2({
-				dropdownParent: $(this)
-			});
-
-			$('select[name="menu_id"]').on('change', function () {
-				var selectedOption = $(this).find('option:selected');
-				var url = selectedOption.data('url');
-				
-				var modal = $(this).closest('.modal');
-				modal.find('input[name="url"]').val(url);
-			});
+				// Transform the table into a DataTable
+				$('#tbl-report-raw').DataTable({
+					columnDefs: [{
+							targets: 1,
+							className: 'text-start'
+						} // Force left alignment on column 1
+					],
+					layout: {
+						topStart: {
+							buttons: [{
+								extend: 'excel',
+								text: '<i class="bx bx-table"></i> Excel',
+								className: 'btn-custom-excel'
+							}]
+						}
+					}
+				});
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				console.error(xhr.statusText);
+			}
 		});
 	});
 </script>
 
-
-
-<!-- SWEET ALERT -->
-<?php if ($this->session->flashdata('SUCCESS_AddSubMenu')): ?>
+<?php if ($this->session->flashdata('SUCCESS_ADD_RAW_MATERIAL')): ?>
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			Swal.fire({
-				title: "Success",
-				html: "<?= $this->session->flashdata('SUCCESS_AddSubMenu'); ?>",
-				icon: "success"
-			});
+		Swal.fire({
+			title: "Success",
+			html: `<?= $this->session->flashdata('SUCCESS_ADD_RAW_MATERIAL'); ?>`,
+			icon: "success"
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_AddSubMenu')): ?>
+<?php if ($this->session->flashdata('FAILED_ADD_RAW_MATERIAL')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
 				title: "Error",
-				html: "<?= $this->session->flashdata('FAILED_AddSubMenu'); ?>",
+				html: `<?= $this->session->flashdata('FAILED_ADD_RAW_MATERIAL'); ?>`,
 				icon: "error"
 			});
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('SUCCESS_editSubMenu')): ?>
+<?php if ($this->session->flashdata('SUCCESS_EDIT_RAW_MATERIAL')): ?>
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			Swal.fire({
-				title: "Success",
-				html: "<?= $this->session->flashdata('SUCCESS_editSubMenu'); ?>",
-				icon: "success"
-			});
+		Swal.fire({
+			title: "Success",
+			html: `<?= $this->session->flashdata('SUCCESS_EDIT_RAW_MATERIAL'); ?>`,
+			icon: "success"
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_editSubMenu')): ?>
+<?php if ($this->session->flashdata('FAILED_EDIT_RAW_MATERIAL')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
 				title: "Error",
-				html: "<?= $this->session->flashdata('FAILED_editSubMenu'); ?>",
+				html: `<?= $this->session->flashdata('FAILED_EDIT_RAW_MATERIAL'); ?>`,
 				icon: "error"
 			});
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('SUCCESS_DeleteSubMenu')): ?>
+<?php if ($this->session->flashdata('SUCCESS_DELETE_RAW_MATERIAL')): ?>
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			Swal.fire({
-				title: "Success",
-				html: "<?= $this->session->flashdata('SUCCESS_DeleteSubMenu'); ?>",
-				icon: "success"
-			});
+		Swal.fire({
+			title: "Success",
+			html: `<?= $this->session->flashdata('SUCCESS_DELETE_RAW_MATERIAL'); ?>`,
+			icon: "success"
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_DeleteSubMenu')): ?>
+<?php if ($this->session->flashdata('FAILED_EDIT_RAW_MATERIAL')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
 				title: "Error",
-				html: "<?= $this->session->flashdata('FAILED_DeleteSubMenu'); ?>",
+				html: `<?= $this->session->flashdata('FAILED_EDIT_RAW_MATERIAL'); ?>`,
+				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>
+<?php if ($this->session->flashdata('ERROR')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Error",
+				html: `<?= $this->session->flashdata('ERROR'); ?>`,
 				icon: "error"
 			});
 		});
