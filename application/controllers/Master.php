@@ -214,6 +214,7 @@ class Master extends CI_Controller
 		$data['title'] = 'WIP Material';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('templates/sidebar');
@@ -231,6 +232,8 @@ class Master extends CI_Controller
 		$data['title'] = 'New WIP Material';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
+		$data['clients'] = $this->MModel->GetAllClients();
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('templates/sidebar');
@@ -241,31 +244,34 @@ class Master extends CI_Controller
 	public function new_wip_material()
 	{
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-		$material_no = $this->MModel->generateNewWipMaterialNo();
+		$client =  htmlspecialchars($this->input->post('Client'));
 		$material_name =  htmlspecialchars($this->input->post('Material_name'));
 		$unit = htmlspecialchars($this->input->post('Unit'));
 		$duplicate_material = $this->MModel->check_duplicate_wip_material($material_name);
 
-
-		if (empty($material_no) || empty($material_name) || empty($unit)) {
+		// CHECK APAKAH DATA MATERIAL DARI USER MASIH KOSONG
+		if (empty($material_name) || empty($unit)) {
 			$this->session->set_flashdata('ERROR', 'No material provided.');
 			redirect('master/wip_material');
 			return;
 		}
 
+		//  CHECK DUPLICATE DATA MATERIAL NAME DI DB
 		if($duplicate_material > 0){
 			$this->session->set_flashdata('ERROR', 'Data Material is already exists.');
 			redirect('master/wip_material');
 			return;
 		}
 
+		// CHECK JIKA SESSION USER SUDAH HABIS
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
 			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
 			redirect('auth');
 			return;
 		}
 		
-
+		// GENERATE LAST MATERIAL NO, BERDASARKAN CLIENT
+		$material_no = $this->MModel->generateNewWipMaterialNo($client);
 		$successfulInserts = 0;
 
 		// Start a transaction to ensure atomicity
