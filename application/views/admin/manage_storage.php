@@ -13,6 +13,7 @@
 								<th class="text-center">Uom</th>
                                 <th class="text-left">Transaction Type</th>
 								<th class="text-left">Update At</th>
+								<th class="text-left">Action</th>
 							</tr>
 						</thead>
 						<tbody class="tbody-report-usage">
@@ -39,6 +40,39 @@
 	</div>
 </div>
 
+<!-- MODAL EDIT -->
+
+<div class="modal fade" id="editModal" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<?= form_open_multipart('admin/EditReceivingMaterial'); ?>
+			<div class="modal-header">
+				<h5 class="modal-title">Add Menu</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- GET USER ID -->
+				<input type="text" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>" hidden>
+				<div class="row ps-2">
+					<div class="col-4">
+						<label for="NameEditModal" class="form-label">Name</label>
+						<input type="text" class="form-control" id="NameEditModal" name="NameEditModal" >
+					</div>
+					<div class="col-4">
+						<label for="menu" class="form-label">Menu</label>
+						<input type="text" class="form-control" id="menu" name="menu" required>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Save changes</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 <script src="<?= base_url('assets'); ?>/js/functions.js"></script>
 <script>
 	$(document).ready(function() {
@@ -56,15 +90,23 @@
 
 				// Loop over the data and build table rows
 				$.each(res, function(index, material) {
-					var row = '<tr>' +
-						'<td class="text-center">' + (index + 1) + '</td>' +
-						'<td class="text-start">' + material.Material_no + '</td>' +
-						'<td class="text-left">' + material.Material_name + '</td>' +
-						'<td class="text-center">' + formatQuantity(material.Qty, material.Unit) + '</td>' +
-						'<td class="text-center">' + material.Unit + '</td>' +
-                        '<td class="text-center">' + material.Transaction_type + '</td>' +
-						'<td class="text-center">' + material.update_at + '</td>' +
-						'</tr>';
+					var row = `<tr>
+						<td class="text-center">${(index + 1)} </td>
+						<td class="text-start">${material.Material_no} </td>
+						<td class="text-left">${material.Material_name} </td> +
+						<td class="text-center">${formatQuantity(material.Qty, material.Unit)}</td> 
+						<td class="text-center">${material.Unit}</td>
+                        <td class="text-center">${material.Transaction_type} </td> 
+						<td class="text-center">${material.Updated_at}</td> 
+						<td>
+							<button class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal${material.id}" data-id=${material.id} data-name=${material.Material_name}>
+								<i class="bx bxs-edit" style="color: white;"></i>
+							</button>
+							<button class="btn btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteModal${material.id}">
+								<i class="bx bxs-trash"></i>
+							</button>
+						</td>
+						</tr>`;
 					$tbody.append(row);
 				});
 
@@ -85,6 +127,13 @@
 						}
 					}
 				});
+
+
+				$('.edit-data').on('click', function(){
+					var name = $(this).data('name') // data-name
+					$('#editModal').modal('show');
+					$('#NameEditModal').val(name);
+				});
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
 				console.error(xhr.statusText);
@@ -93,3 +142,26 @@
 
 	});
 </script>
+
+<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_RAW')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Error",
+				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_RAW'); ?>`,
+				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>
+<?php if ($this->session->flashdata('ERROR')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Error",
+				html: `<?= $this->session->flashdata('ERROR'); ?>`,
+				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>

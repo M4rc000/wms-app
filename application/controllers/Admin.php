@@ -33,6 +33,22 @@ class Admin extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+	public function new_dispatch_note(){
+
+		$data['title'] = 'New Delivery Item';
+        $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		$data['materials'] = $this->AModel->getListWIP();
+		$data['users'] = $this->AModel->getUsers();
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/navbar', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('admin/add_delivery_item', $data);
+        $this->load->view('templates/footer');
+    }
+
+
 	public function addReceivingRawMaterial()
 	{
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
@@ -188,72 +204,6 @@ class Admin extends CI_Controller
 		// $this->load->view('pdf/pdf_delivery_view', $data);
 	}
 
-	public function addDeliveryItem(){
-		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-
-		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
-			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
-			redirect('auth');
-			return;
-		}
-
-		$delivery = $this->input->post('delivery');
-		if (empty($delivery)) {
-			$this->session->set_flashdata('ERROR', 'No delivery provided.');
-			redirect('admin/delivery_item');
-			return;
-		}
-
-		$successfulInserts = 0;
-
-		// Start a transaction to ensure atomicity
-		$this->db->trans_start();
-
-		foreach ($delivery as $delivery) {
-			$DataDeliveryStatus = [
-				'Material_no'      => $delivery['Product_no'],
-				'Material_name'    => $delivery['Product_name'],
-				'Qty'              => floatval($delivery['Qty']),
-				'Unit'             => $delivery['Unit'],
-				'Status' 		   => $delivery['Status'],
-				'Driver_id' 	   => $delivery['Driver_id'],
-				'Delivery_date'    => $delivery['Delivery_date'],
-				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $usersession['Id'],
-				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $usersession['Id']
-			];
-
-			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
-			$check_insert = $this->db->affected_rows();
-
-			if ($check_insert > 0) {
-				// RECORD BOM LOG
-				$query_log = $this->db->last_query();
-				$log_data = [
-					'affected_table' => 'dispatch_note',
-					'queries'        => $query_log,
-					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $usersession['Id']
-				];
-				$this->db->insert('log', $log_data);
-				$successfulInserts++;
-			}
-		}
-
-		// Complete the transaction
-		$this->db->trans_complete();
-
-		// Check if all delivery were inserted successfully
-		if ($this->db->trans_status() && $successfulInserts == count($delivery)) {
-			$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', 'All delivery added successfully.');
-		} else {
-			$this->session->set_flashdata('FAILED_ADD_DELIVERY_ITEM', 'Failed to add some or all delivery.');
-		}
-
-		redirect('admin/delivery_item');
-	}
-
 	public function manage_storage(){
 		$data['title'] = 'Manage Storage';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
@@ -373,7 +323,33 @@ class Admin extends CI_Controller
 		redirect('admin/demand_forecasting_stock');	
 	}
 	
-	public function print_delivery_pdf($id){
+	public function EditReceivingMaterial(){
+		$id = $this->input->post('NameEditModal');
+		$data = [
+			'Material_no' => $this->input->post('NameEditModal'),
+			// '...' => $this->input->post('NameEditModal');
+			// '...' => $this->input->post('NameEditModal');
+			// '...' => $this->input->post('NameEditModal');
+			// '...' => $this->input->post('NameEditModal');
+		];
+
+		$this->AModel->updateData('storage', $id, $data);
+		
+		//  
+		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
+		if(success > 0){
+			$this->session->set_flashdata('SUCCESS', 'No delivery provided.');
+			redirect('admin/delivery_item');
+		}
+		else{
+			$this->session->set_flashdata('ERROR', 'No delivery provided.');
+			redirect('admin/delivery_item');
+		}
+		redirect('admin/delivery_item');
+	}
+
+	public function print_delivery_pdf($apaja){
+
 		// Ambil data berdasarkan ID
 		$delivery = $this->AModel->getDeliveryById($id);
 		
@@ -393,5 +369,71 @@ class Admin extends CI_Controller
 		$this->pdf->setPaper('A4', 'portrait');
 		$this->pdf->render();
 		$this->pdf->stream('surat_jalan_' . $id . '.pdf', ["Attachment" => false]);
+	}
+
+	public function addDeliveryItem(){
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
+		$delivery = $this->input->post('delivery');
+		if (empty($delivery)) {
+			$this->session->set_flashdata('ERROR', 'No delivery provided.');
+			redirect('admin/delivery_item');
+			return;
+		}
+
+		$successfulInserts = 0;
+
+		// Start a transaction to ensure atomicity
+		$this->db->trans_start();
+
+		foreach ($delivery as $delivery) {
+			$DataDeliveryStatus = [
+				'Material_no'      => $delivery['Product_no'],
+				'Material_name'    => $delivery['Product_name'],
+				'Qty'              => floatval($delivery['Qty']),
+				'Unit'             => $delivery['Unit'],
+				'Status' 		   => $delivery['Status'],
+				'Driver_id' 	   => $delivery['Driver_id'],
+				'Delivery_date'    => $delivery['Delivery_date'],
+				'Created_at'       => date('Y-m-d H:i:s'),
+				'Created_by'       => $usersession['Id'],
+				'Updated_at'       => date('Y-m-d H:i:s'),
+				'Updated_by'       => $usersession['Id']
+			];
+
+			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
+			$check_insert = $this->db->affected_rows();
+
+			if ($check_insert > 0) {
+				// RECORD BOM LOG
+				$query_log = $this->db->last_query();
+				$log_data = [
+					'affected_table' => 'dispatch_note',
+					'queries'        => $query_log,
+					'Created_at'     => date('Y-m-d H:i:s'),
+					'Created_by'     => $usersession['Id']
+				];
+				$this->db->insert('log', $log_data);
+				$successfulInserts++;
+			}
+		}
+
+		// Complete the transaction
+		$this->db->trans_complete();
+
+		// Check if all delivery were inserted successfully
+		if ($this->db->trans_status() && $successfulInserts == count($delivery)) {
+			$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', 'All delivery added successfully.');
+		} else {
+			$this->session->set_flashdata('FAILED_ADD_DELIVERY_ITEM', 'Failed to add some or all delivery.');
+		}
+
+		redirect('admin/delivery_item');
 	}
 }

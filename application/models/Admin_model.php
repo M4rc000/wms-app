@@ -9,6 +9,10 @@ class Admin_model extends CI_Model {
 	public function getListWIP(){
 		return $this->db->get('wip_material')->result_array();
 	}
+	
+    public function getUsers(){
+		return $this->db->get('users')->result_array();
+	}
 
 	public function insertData($table, $Data)
 	{
@@ -181,7 +185,8 @@ class Admin_model extends CI_Model {
 			Material_name,
 			Qty,
 			Unit,
-			Transaction_type
+			Transaction_type,
+            Updated_at
 			FROM
 				storage
 			-- WHERE 
@@ -193,16 +198,12 @@ class Admin_model extends CI_Model {
     }    
 
 	public function getDeliveryItem(){
-		return $this->db->query("SELECT 
+		return $this->db->query("SELECT DISTINCT(SJ)
 			Id,
-			Product_no,
-			Product_name,
-			Qty,
-			Unit,
-			Active,
-			Status,
+            SJ,
 			Driver_id,
 			Delivery_date
+			Status,
 			FROM
 				dispatch_note")->result_array();
 	}

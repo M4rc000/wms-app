@@ -19,9 +19,11 @@
 			<div class="card border">
 				<div class="row mb-3 mx-2 mt-4">
 					<div class="col-12 col-md-3">
-						<button type="button" class="btn btn-primary w-40" id="add-row-btn">
-							<i class="bi bi-plus-circle"></i>
-						</button>
+						<a href="<?=base_url('admin/new_dispatch_note');?>">
+							<button type="button" class="btn btn-primary w-40" id="add-row-btn">
+								New Delivery Item
+							</button>
+						</a>
 					</div>
 				</div>
 					<div class="row mt-2 mx-2">
@@ -31,13 +33,10 @@
 									<thead>
 										<tr>
 											<th class="text-center">#</th>
-											<th class="text-center">Product No</th>
-											<th class="text-center">Product Name</th>
-											<th class="text-center">Qty</th>
-											<th class="text-center">Uom</th>
-											<th class="text-center">Status</th>
+											<th class="text-center">SJ</th>
 											<th class="text-center">Driver ID</th>
                                             <th class="text-center">Delivery Date</th>
+											<th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
 										</tr>
 									</thead>
@@ -83,13 +82,10 @@
 				$.each(res, function(index, delivery) {
 					var row = '<tr>' +
 						'<td class="text-center">' + (index + 1) + '</td>' +
-						'<td class="text-center">' + delivery.Product_no + '</td>' +
-						'<td class="text-left">' + delivery.Product_name + '</td>' +
-						'<td class="text-center">' + delivery.Qty + '</td>' +
-						'<td class="text-center">' + delivery.Unit + '</td>' +
-						'<td class="text-center">' + delivery.Status + '</td>' +
+						'<td class="text-center">' + delivery.SJ + '</td>' +
 						'<td class="text-center">' + delivery.Driver_id + '</td>' +
 						'<td class="text-center">' + formatDateToLong(delivery.Delivery_date) + '</td>' +
+						'<td class="text-center">' + delivery.Status + '</td>' +
 						'<td class="text-center">' +
 							'<button class="btn btn-sm btn-danger generate-pdf-btn" data-id="' + delivery.Id + '">' +
 								'<i class="bi bi-file-earmark-pdf"></i>' +
