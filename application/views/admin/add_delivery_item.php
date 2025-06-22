@@ -110,7 +110,7 @@
                         <input type="text" class="form-control material-unit text-center w-full" name="materials[${rowIndex}][Unit]" aria-label="Unit of Measure" readonly>
                     </td>
                     <td>
-                        <select class="form-select material-select w-full" name="userid[${(rowIndex-1)}][Name]" required>
+                        <select class="form-select user-select w-full" name="userid[${(rowIndex-1)}][Name]" required>
                             ${usersOption}
                         </select>
                     </td>
@@ -129,6 +129,9 @@
 				width: '100%'
 			});
 			$('.transaction-type').select2({
+				width: '100%'
+			});
+			$('.user-select').select2({
 				width: '100%'
 			});
 

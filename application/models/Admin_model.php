@@ -11,7 +11,9 @@ class Admin_model extends CI_Model {
 	}
 	
     public function getUsers(){
-		return $this->db->get('users')->result_array();
+        $driver = $this->db->get_where('user_role', ['Name' => 'Driver'])->result_array();
+        $driver_id = $driver[0]['Id'];
+        return $this->db->get_where('users', ['Role_id' => $driver_id])->result_array();
 	}
 
 	public function insertData($table, $Data)
@@ -189,12 +191,7 @@ class Admin_model extends CI_Model {
             Updated_at
 			FROM
 				storage
-			-- WHERE 
-			-- 	Material_no LIKE '%RW%'
-			GROUP BY 
-				Material_no
-			ORDER BY 
-		Material_no")->result_array();
+			")->result_array();
     }    
 
 	public function getDeliveryItem(){

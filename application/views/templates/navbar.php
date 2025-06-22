@@ -23,16 +23,16 @@
 					<i class="bi bi-bell"></i>
 					<span class="badge bg-primary badge-number">
 						<?php
-						$query = "SELECT DISTINCT Material_no, Material_name, Updated_at, Updated_by
+						$query = "SELECT DISTINCT Material_no, Material_name, Qty, Updated_at, Updated_by
 							FROM 
 								storage
 							WHERE
 								Material_no LIKE '%RW%'
 							GROUP BY 
-								material_no, material_name
+								Material_no, Material_name
 							HAVING 
-								(SUM(CASE WHEN transaction_type = 'IN' THEN Qty ELSE 0 END) - 
-								SUM(CASE WHEN transaction_type = 'OUT' THEN Qty ELSE 0 END)) <= 25";
+								(SUM(CASE WHEN Transaction_type = 'In' THEN Qty ELSE 0 END) - 
+								SUM(CASE WHEN Transaction_type = 'Out' THEN Qty ELSE 0 END)) <= 25";
 						$lowNotifCount = $this->db->query($query)->num_rows();
 						$lowNotifStock = $this->db->query($query)->result_array();
 						echo $lowNotifCount;

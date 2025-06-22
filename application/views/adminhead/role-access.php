@@ -337,7 +337,7 @@ foreach ($accesssubmenu as $acsm) : ?>
 				</div>
 				<div class="modal-body">
 					<input type="text" name="id" id="id" value="<?= $acsm['Id']; ?>" hidden>
-					<input type="text" name="user_id" id="user_id" value="<?= $name['Id']; ?>" hidden>
+					<input type="text" name="user_id" id="user_id" value="<?= $user['Id']; ?>" hidden>
 					<input type="text" name="role_id" id="role_id" value="<?= $acsm['Role_id']; ?>" hidden>
 					<p><b>Role </b>: <?= $acsm['Role_Name']; ?></p>
 					<p><b>Menu</b>: <?= $acsm['Menu_Name']; ?></p>

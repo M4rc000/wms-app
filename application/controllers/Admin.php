@@ -337,7 +337,7 @@ class Admin extends CI_Controller
 		
 		//  
 		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
-		if(success > 0){
+		if($success > 0){
 			$this->session->set_flashdata('SUCCESS', 'No delivery provided.');
 			redirect('admin/delivery_item');
 		}
@@ -348,7 +348,7 @@ class Admin extends CI_Controller
 		redirect('admin/delivery_item');
 	}
 
-	public function print_delivery_pdf($apaja){
+	public function print_delivery_pdf($id){
 
 		// Ambil data berdasarkan ID
 		$delivery = $this->AModel->getDeliveryById($id);
