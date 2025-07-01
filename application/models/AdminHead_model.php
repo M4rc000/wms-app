@@ -18,11 +18,18 @@ class AdminHead_model extends CI_Model {
 		$this->db->where('Id', $id);
 		$this->db->delete($table);
 	}
-
+	
 	public function updateData($table, $id, $Data)
 	{
 		$this->db->where('Id', $id);
 		$this->db->update($table, $Data);
+	}
+
+	public function deleteMenu($table, $id){
+		$this->db->where('Menu_id', $id);
+		$this->db->delete('user_sub_menu');
+		$this->db->where('Id', $id);
+		$this->db->delete($table);
 	}
 
 	public function getLastMenuId(){

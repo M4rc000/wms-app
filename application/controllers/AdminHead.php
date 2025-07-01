@@ -223,20 +223,20 @@ class AdminHead extends CI_Controller {
 		$this->AHModel->updateData('users', $id, $Data);
 		$check_insert = $this->db->affected_rows();
 
-		if ($check_insert > 0) {
-			// LOG
-			$query_log = $this->db->last_query();
-			$log_data = [
-				'affected_table' => 'users',
-				'queries' => $query_log,
-				'Created_at' => date('Y-m-d H:i:s'),
-				'Created_by' => $usersession['Id']
-			];
-			$this->AHModel->insertData('log', $id, $log_data);
-			$this->session->set_flashdata('SUCCESS_EditUser', 'User has been successfully updated');
-		} else {
-			$this->session->set_flashdata('FAILED_EditUser', 'Failed to update a user');
-		}
+		// if ($check_insert > 0) {
+		// 	// LOG
+		// 	$query_log = $this->db->last_query();
+		// 	$log_data = [
+		// 		'affected_table' => 'users',
+		// 		'queries' => $query_log,
+		// 		'Created_at' => date('Y-m-d H:i:s'),
+		// 		'Created_by' => $usersession['Id']
+		// 	];
+		// 	$this->AHModel->insertData('log', $id, $log_data);
+		// 	$this->session->set_flashdata('SUCCESS_EditUser', 'User has been successfully updated');
+		// } else {
+		// 	$this->session->set_flashdata('FAILED_EditUser', 'Failed to update a user');
+		// }
 
 		redirect('adminhead/manage_user');
 	}
@@ -675,8 +675,7 @@ class AdminHead extends CI_Controller {
 		redirect('adminhead/manage_menu');
 	}
 
-	public function deleteMenu()
-	{
+	public function deleteMenu(){
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
@@ -687,23 +686,26 @@ class AdminHead extends CI_Controller {
 
 		$id = $this->input->post('id');
 
+		$this->db->where('Menu_id', $id);
+		$this->db->delete('user_sub_menu');
+
 		$this->AHModel->deleteData('user_menu', $id);
 
 		$check_insert = $this->db->affected_rows();
 
 		if ($check_insert > 0) {
 			// LOG
-			$query_log = $this->db->last_query();
+			$query_log = $this->db->last_query(); 
 			$log_data = [
 				'affected_table' => 'user_menu',
 				'queries' => $query_log,
-				'Created_at' => date('Y-m-d H:i:s'),
+				'Created_at' => date('Y-m-d H:i:s', time()),
 				'Created_by' => $usersession['Id']
 			];
 			$this->AHModel->insertData('log', $log_data);
-			$this->session->set_flashdata('SUCCESS_deleteMenu', 'Menu has been successfully deleted');
+			$this->session->set_flashdata('SUCCESS_deleteMenu', 'Menu and its sub-menus have been successfully deleted.');
 		} else {
-			$this->session->set_flashdata('FAILED_deleteMenu', 'Failed to delete the menu');
+			$this->session->set_flashdata('FAILED_deleteMenu', 'Failed to delete the menu. It might have already been removed.');
 		}
 
 		redirect('adminhead/manage_menu');

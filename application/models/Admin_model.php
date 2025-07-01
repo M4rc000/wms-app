@@ -9,6 +9,12 @@ class Admin_model extends CI_Model {
 	public function getListWIP(){
 		return $this->db->get('wip_material')->result_array();
 	}
+	
+    public function getUsers(){
+        $driver = $this->db->get_where('user_role', ['Name' => 'Driver'])->result_array();
+        $driver_id = $driver[0]['Id'];
+        return $this->db->get_where('users', ['Role_id' => $driver_id])->result_array();
+	}
 
 	public function insertData($table, $Data)
 	{
@@ -181,28 +187,20 @@ class Admin_model extends CI_Model {
 			Material_name,
 			Qty,
 			Unit,
-			Transaction_type
+			Transaction_type,
+            Updated_at
 			FROM
 				storage
-			-- WHERE 
-			-- 	Material_no LIKE '%RW%'
-			GROUP BY 
-				Material_no
-			ORDER BY 
-		Material_no")->result_array();
+			")->result_array();
     }    
 
 	public function getDeliveryItem(){
-		return $this->db->query("SELECT 
+		return $this->db->query("SELECT DISTINCT(SJ)
 			Id,
-			Product_no,
-			Product_name,
-			Qty,
-			Unit,
-			Active,
-			Status,
+            SJ,
 			Driver_id,
 			Delivery_date
+			Status,
 			FROM
 				dispatch_note")->result_array();
 	}

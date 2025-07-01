@@ -19,9 +19,11 @@
 			<div class="card border">
 				<div class="row mb-3 mx-2 mt-4">
 					<div class="col-12 col-md-3">
-						<button type="button" class="btn btn-primary w-40" id="add-row-btn">
-							<i class="bi bi-plus-circle"></i>
-						</button>
+						<a href="<?=base_url('admin/add_delivery_item');?>">
+							<button type="button" class="btn btn-primary w-40" id="add-row-btn">
+								New Delivery Item
+							</button>
+						</a>
 					</div>
 				</div>
 					<div class="row mt-2 mx-2">

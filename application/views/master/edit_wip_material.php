@@ -4,10 +4,10 @@
 			<div class="container mx-2 mt-5">
 				<form method="post" action="<?=base_url('master/update_wip_material');?>">
 					<div class="row mb-3">
-						<input type="hidden" class="form-control" name="id" id="id" value="<?=$materials[0]['Id'];?>" required readonly>
+						<!-- <input type="hidden" class="form-control" name="id" id="id" value="<?=$materials[0]['Id'];?>" required readonly> -->
 						<label class="col-sm-2 col-form-label"><strong>Material No</strong></label>
 						<div class="col-sm-4">
-							<input type="text" class="form-control" name="Material_no" id="Material_no" value="<?=$materials[0]['Material_no'];?>" required readonly>
+							<input type="text" class="form-control" name="Material_no" id="Material_no" value="<?=$materials[0]['Material_no'];?>" required>
 						</div>
 					</div>
 					
