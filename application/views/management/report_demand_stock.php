@@ -10,6 +10,7 @@
 								<th class="text-left">Material No</th>
 								<th class="text-left">Material Name</th>
 								<th class="text-center">Qty Predict</th>
+								<th class="text-center">Unit</th>
 								<th class="text-center">Date</th>
 							</tr>
 						</thead>
@@ -58,7 +59,8 @@
 						'<td class="text-center">' + (index + 1) + '</td>' +
 						'<td class="text-start">' + material.Material_no + '</td>' +
 						'<td class="text-left">' + material.Material_name + '</td>' +
-						'<td class="text-center">' + (material.Qty) + '</td>' +
+						'<td class="text-center">' + (material.Qty_predict) + '</td>' +
+						'<td class="text-center">' + (material.Unit) + '</td>' +
 						'<td class="text-center">' + material.Date + '</td>' +
 						'</tr>';
 					$tbody.append(row);

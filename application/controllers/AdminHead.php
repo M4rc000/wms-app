@@ -11,9 +11,11 @@ class AdminHead extends CI_Controller {
 		perform_access_check();
         $this->load->library('form_validation');
         $this->load->library('pagination');
-        $this->load->model('AdminHead_model','AHModel');   
+        $this->load->model('AdminHead_model','AHModel'); 
     }
 	
+
+	// DASHBOARD
 	public function dashboard(){
 		$data['title'] = 'Dashboard';
 		$data['user'] = $this->db->get_where('users', [
@@ -55,6 +57,7 @@ class AdminHead extends CI_Controller {
 
 		echo json_encode($materials);
 	}
+	// END OF DASHBOARD
 
 	public function manage_user()
 	{
@@ -392,6 +395,7 @@ class AdminHead extends CI_Controller {
 		header("Location: " . base_url('adminhead/manage_role'));
 	}
 
+
 	public function roleAccess($role_id)
 	{
 		$data['title'] = 'Role Access';
@@ -451,7 +455,7 @@ class AdminHead extends CI_Controller {
 		$check_insert = $this->db->affected_rows();
 
 
-		if($check_insert){
+		if($check_insert > 0){
 			// LOG
 			$query_log = $this->db->last_query();
 			$log_data = [
@@ -480,6 +484,7 @@ class AdminHead extends CI_Controller {
 			return;
 		}
 
+		// USER ACCESS MENU
 		$id = $this->input->post('id');
 		$role_id = $this->input->post('role_id');
 		$this->AHModel->deleteData('user_access_menu', $id);
@@ -609,7 +614,7 @@ class AdminHead extends CI_Controller {
 		$Data = array(
 			'Id' => $this->input->post('id'),
 			'Name' => $this->input->post('menu'),
-			'Created_at' => date('d-m-Y H:i:s'),
+			'Created_at' => date('d-m-Y H:i:s'), // Jakarta
 			'Created_by' => $usersession['Id'],
 			'Updated_at' => date('d-m-Y H:i:s'),
 			'Updated_by' => $usersession['Id']

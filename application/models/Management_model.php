@@ -52,9 +52,11 @@ ORDER BY
     }    
 
     public function getDemandStock() {
-        return $this->db->query("SELECT *
-            FROM 
-                demand_forecast
+        return $this->db->query("SELECT df.Material_no, df.Material_name, df.Qty_predict, rw.Unit, df.Date
+FROM
+    demand_forecast AS df
+LEFT JOIN
+    raw_material AS rw ON df.Material_no = rw.Material_no;
         ")->result_array();
     }    
 }

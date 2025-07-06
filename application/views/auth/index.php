@@ -17,23 +17,14 @@
 					<p class="text-center small">Enter your email & password</p>
 					<br>
 					</div>
-					<?php if ($this->session->flashdata('registration') != '') { ?>
-						<?= $this->session->flashdata('registration'); ?>
-					<?php } ?>
 					<?php if ($this->session->flashdata('logout') != '') { ?>
 						<?= $this->session->flashdata('logout'); ?>
 					<?php } ?>
-					<?php if ($this->session->flashdata('wrong_username') != '') { ?>
-						<?= $this->session->flashdata('wrong_username'); ?>
-					<?php } ?>
-					<?php if ($this->session->flashdata('not_active_username') != '') { ?>
-						<?= $this->session->flashdata('not_active_username'); ?>
+					<?php if ($this->session->flashdata('not_active_email') != '') { ?>
+						<?= $this->session->flashdata('not_active_email'); ?>
 					<?php } ?>
 					<?php if ($this->session->flashdata('wrong_password') != '') { ?>
 						<?= $this->session->flashdata('wrong_password'); ?>
-					<?php } ?>
-					<?php if ($this->session->flashdata('success') != '') { ?>
-						<?= $this->session->flashdata('success'); ?>
 					<?php } ?>
 					<form class="row g-3 needs-validation" method="post" action="<?=base_url('auth/index')?>">
 						<div class="col-12">

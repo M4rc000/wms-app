@@ -1,5 +1,6 @@
 <?php 
 defined('BASEPATH') OR exit('No direct script access allowed');
+// SET TIMEZONE
 date_default_timezone_set('Asia/Jakarta');
 
 class Auth extends CI_Controller {
@@ -33,6 +34,7 @@ class Auth extends CI_Controller {
 
 	private function _login()
 	{
+		// ambil data dari form
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 
@@ -72,10 +74,10 @@ class Auth extends CI_Controller {
 				}
 			} else {
 				$this->session->set_flashdata(
-					'wrong_username',
+					'not_active_email',
 					'
                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 40%">
-                    <i class="bi bi-x-circle me-1"></i> Your username has not been activated
+                    <i class="bi bi-x-circle me-1"></i> Your Email has not been activated
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 '
