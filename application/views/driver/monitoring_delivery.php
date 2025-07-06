@@ -48,5 +48,108 @@
 	</div>
 </section>
 
+<div class="spinner-container" id="spinner-container">
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<div class="spinner-grow text-success" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
 
+<!-- Edit Modal -->
 
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      
+      <?= form_open_multipart('driver/EditDeliveryStatus'); ?>
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <input type="hidden" class="form-control" id="material_id" name="material_id">
+        <div class="row ps-2">
+          <div class="col-6">
+            <label for="NameEditModal" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="NameEditModal" name="NameEditModal" readonly>
+          </div>
+          <div class="col-6">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select" required>
+              <option value="">-- Select Status --</option>
+              <option value="Outgoing">Outgoing</option>
+              <option value="Pending">Pending</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+
+      </form> 
+
+    </div>
+  </div>
+</div>
+
+<script src="<?= base_url('assets'); ?>/js/functions.js"></script>
+<script>
+	$(document).ready(function () {
+	$.ajax({
+		url: '<?= base_url('driver/load_monitoring_delivery'); ?>',
+		type: 'get',
+		dataType: 'json',
+		success: function (res) {
+			$('#spinner-container').hide(); // Sembunyikan spinner setelah data dimuat
+			var $tbody = $('#table-body'); // sesuai dengan ID tbody kamu
+
+			$.each(res, function (index, item) {
+				var row = `<tr>
+					<td class="text-center">${index + 1}</td>
+					<td class="text-center">${item.Product_no}</td>
+					<td class="text-center">${item.Product_name}</td>
+					<td class="text-center">${item.Qty}</td>
+					<td class="text-center">${item.Unit}</td>
+					<td class="text-center">${item.Status}</td>
+					<td class="text-center">${item.Driver_id}</td>
+					<td class="text-center">${item.Delivery_date}</td>
+					<td>
+						<button type="button" class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal"
+							data-id="${item.id}" 
+							data-name="${item.Product_name}" 
+							data-status="${item.Status}">
+							<i class="bx bxs-edit" style="color: white;"></i>
+						</button>
+					</td>
+				</tr>`;
+				$tbody.append(row);
+			});
+
+			$('.edit-data').on('click', function () {
+			const id = $(this).data('id');
+			const name = $(this).data('name');
+			const status = $(this).data('status');
+
+			$('#material_id').val(id);
+			$('#NameEditModal').val(name);
+			$('#status').val(status);
+		});
+
+		},
+		error: function (xhr) {
+			console.error(xhr.responseText);
+		}
+	});
+});
+</script>

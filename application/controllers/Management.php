@@ -41,8 +41,6 @@ class Management extends CI_Controller
 		echo json_encode($raw_materials);
 	}
 	
-	// public report_wip_material(){}
-
 	public function load_wip_material(){
 		$wip_materials = $this->MGModel->getWipMaterials();
 		echo json_encode($wip_materials);

@@ -26,12 +26,39 @@ class Driver extends CI_Controller
 		$this->load->view('templates/footer');
 	}
 
-	public function editDeliveryStatus(){
-		$delivery_status = $this->input->post('delivery_status');
-		if (empty($delivery_status)) {
-			$this->session->set_flashdata('ERROR', 'Cant update delivery status.');
+		public function EditDeliveryStatus(){
+		$material_id = $this->input->post('material_id');
+		$status = $this->input->post('status');
+
+		// Tambahkan log untuk melihat data POST
+		log_message('debug', 'material_id: ' . $material_id);
+		log_message('debug', 'status: ' . $status);
+
+		if (empty($material_id) || empty($status)) {
+			log_message('debug', 'Missing input, redirecting...');
+			$this->session->set_flashdata('ERROR', 'Cannot update: missing ID or status.');
 			redirect('driver/monitoring_delivery');
 			return;
 		}
+
+		// Jalankan update
+		$this->db->where('Id', $material_id); // <- pastikan 'Id' sesuai dengan nama kolom DB kamu
+		$this->db->update('dispatch_note', ['Status' => $status]);
+
+		// Tambahkan log untuk melihat apakah update berhasil
+		if ($this->db->affected_rows() > 0) {
+			log_message('debug', 'Status updated successfully for ID ' . $material_id);
+			$this->session->set_flashdata('SUCCESS', 'Delivery status updated.');
+		} else {
+			log_message('debug', 'No rows updated. ID might be wrong or status same as before.');
+			$this->session->set_flashdata('ERROR', 'No data updated.');
+		}
+
+		redirect('driver/monitoring_delivery');
+	}
+
+	public function load_monitoring_delivery(){
+		$monitoring_delivery = $this->DModel->getDeliveryItem();
+		echo json_encode($monitoring_delivery);
 	}
 }
