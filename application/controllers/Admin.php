@@ -327,6 +327,7 @@ class Admin extends CI_Controller
 		$id = $this->input->post('NameEditModal');
 		$data = [
 			'Material_no' => $this->input->post('NameEditModal'),
+			'Menu' => $this->input->post('NameEditModal'),
 			// '...' => $this->input->post('NameEditModal');
 			// '...' => $this->input->post('NameEditModal');
 			// '...' => $this->input->post('NameEditModal');

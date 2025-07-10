@@ -26,7 +26,7 @@ class Driver extends CI_Controller
 		$this->load->view('templates/footer');
 	}
 
-		public function EditDeliveryStatus(){
+	public function EditDeliveryStatus(){
 		$material_id = $this->input->post('material_id');
 		$status = $this->input->post('status');
 

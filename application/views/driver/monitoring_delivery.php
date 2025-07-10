@@ -61,13 +61,10 @@
 </div>
 
 <!-- Edit Modal -->
-
 <div class="modal fade" id="editModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      
       <?= form_open_multipart('driver/EditDeliveryStatus'); ?>
-
       <div class="modal-header">
         <h5 class="modal-title">Edit Status</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -77,8 +74,8 @@
         <input type="hidden" class="form-control" id="material_id" name="material_id">
         <div class="row ps-2">
           <div class="col-6">
-            <label for="NameEditModal" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="NameEditModal" name="NameEditModal" readonly>
+            <label for="product_name" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="product_name" name="product_name" readonly>
           </div>
           <div class="col-6">
             <label for="status" class="form-label">Status</label>
@@ -125,8 +122,8 @@
 					<td class="text-center">${item.Driver_id}</td>
 					<td class="text-center">${item.Delivery_date}</td>
 					<td>
-						<button type="button" class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal"
-							data-id="${item.id}" 
+						<button type="button" class="btn btn-success edit-data"
+							data-id="${item.Id}" 
 							data-name="${item.Product_name}" 
 							data-status="${item.Status}">
 							<i class="bx bxs-edit" style="color: white;"></i>
@@ -136,14 +133,15 @@
 				$tbody.append(row);
 			});
 
-			$('.edit-data').on('click', function () {
+		$(document).on('click','.edit-data', function () {
 			const id = $(this).data('id');
 			const name = $(this).data('name');
 			const status = $(this).data('status');
 
 			$('#material_id').val(id);
-			$('#NameEditModal').val(name);
+			$('#product_name').val(name);
 			$('#status').val(status);
+			$('#editModal').modal('show');
 		});
 
 		},

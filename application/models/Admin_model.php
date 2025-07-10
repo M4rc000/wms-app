@@ -181,7 +181,8 @@ class Admin_model extends CI_Model {
 			Material_name,
 			Qty,
 			Unit,
-			Transaction_type
+			Transaction_type,
+            Updated_at
 			FROM
 				storage
 			-- WHERE 

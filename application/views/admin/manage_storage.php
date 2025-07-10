@@ -89,6 +89,7 @@
 				var $tbody = $('.tbody-report-usage');
 
 				// Loop over the data and build table rows
+				console.log("Res: ", res);
 				$.each(res, function(index, material) {
 					var row = `<tr>
 						<td class="text-center">${(index + 1)} </td>
@@ -97,7 +98,7 @@
 						<td class="text-center">${formatQuantity(material.Qty, material.Unit)}</td> 
 						<td class="text-center">${material.Unit}</td>
                         <td class="text-center">${material.Transaction_type} </td> 
-						<td class="text-center">${material.Updated_at}</td> 
+						<td class="text-center">${material.Updated_at == '' ? "-" : material.Updated_at}</td> 
 						<td>
 							<button class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal${material.id}" data-id=${material.id} data-name=${material.Material_name}>
 								<i class="bx bxs-edit" style="color: white;"></i>
