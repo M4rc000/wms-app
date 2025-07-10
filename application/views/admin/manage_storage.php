@@ -152,12 +152,14 @@
 
 				$('.edit-data').on('click', function(){
 					var id = $(this).data('id')
+					var materialNo = $(this).data('material-no') // data-material-no
 					var name = $(this).data('name') // data-name
 					var qty = $(this).data('qty')
 					var transaction = $(this).data('transaction-type') 
 
 					$('#editModal').modal('show');
-					$('#MaterialIdEdit').val(id);
+					$('#user_id').val('<?= $user['Id']; ?>');
+					$('#MaterialIdEdit').val(materialNo);
 					$('#MaterialNameEdit').val(name);
 					$('#QtyEdit').val(qty);
 					$('#TransactionTypeEdit').val(transaction);
