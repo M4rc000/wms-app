@@ -47,20 +47,31 @@
 		<div class="modal-content">
 			<?= form_open_multipart('admin/EditReceivingMaterial'); ?>
 			<div class="modal-header">
-				<h5 class="modal-title">Add Menu</h5>
+				<h5 class="modal-title">Edit Receiving WIP</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<!-- GET USER ID -->
-				<input type="text" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>" hidden>
+				<input type="hidden" class="form-control" id="user_id" name="user_id" value="<?= $user['Id']; ?>">
 				<div class="row ps-2">
 					<div class="col-4">
-						<label for="NameEditModal" class="form-label">Name</label>
-						<input type="text" class="form-control" id="NameEditModal" name="NameEditModal" >
+						<label for="MaterialIdEdit" class="form-label">Material Id</label>
+						<input type="text" class="form-control" id="MaterialIdEdit" name="MaterialIdEdit" readonly>
 					</div>
 					<div class="col-4">
-						<label for="menu" class="form-label">Menu</label>
-						<input type="text" class="form-control" id="menu" name="menu" required>
+						<label for="MaterialNameEdit" class="form-label">Material Name</label>
+						<input type="text" class="form-control" id="MaterialNameEdit" name="MaterialNameEdit" readonly>
+					</div>
+					<div class="col-4">
+						<label for="QtyEdit" class="form-label">Qty</label>
+						<input type="number" class="form-control" id="QtyEdit" name="QtyEdit" required>
+					</div>
+					<div class="col-4 mt-3">
+						<label for="TransactionTypeEdit" class="form-label">Transaction Type</label>
+						<select class="form-select" id="TransactionTypeEdit" name="TransactionTypeEdit">
+							<option value="In">In</option>
+							<option value="Out">Out</option>
+						</select>
 					</div>
 				</div>
 			</div>
@@ -89,7 +100,6 @@
 				var $tbody = $('.tbody-report-usage');
 
 				// Loop over the data and build table rows
-				console.log("Res: ", res);
 				$.each(res, function(index, material) {
 					var row = `<tr>
 						<td class="text-center">${(index + 1)} </td>
@@ -98,12 +108,22 @@
 						<td class="text-center">${formatQuantity(material.Qty, material.Unit)}</td> 
 						<td class="text-center">${material.Unit}</td>
                         <td class="text-center">${material.Transaction_type} </td> 
-						<td class="text-center">${material.Updated_at == '' ? "-" : material.Updated_at}</td> 
+						<td class="text-center">${material.Updated_at}</td> 
 						<td>
-							<button class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal${material.id}" data-id=${material.id} data-name=${material.Material_name}>
+							<button class="btn btn-success edit-data" 
+								data-bs-toggle="modal" 
+								data-bs-target="#editModal" 
+								data-id="${material.id}" 
+								data-material-no="${material.Material_no}"
+								data-name="${material.Material_name}"
+								data-qty="${material.Qty}"
+								data-transaction-type="${material.Transaction_type}">
 								<i class="bx bxs-edit" style="color: white;"></i>
 							</button>
-							<button class="btn btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteModal${material.id}">
+
+							<button class="btn btn-danger ms-1" 
+								data-bs-toggle="modal" 
+								data-bs-target="#deleteModal${material.id}">
 								<i class="bx bxs-trash"></i>
 							</button>
 						</td>
@@ -131,9 +151,16 @@
 
 
 				$('.edit-data').on('click', function(){
+					var id = $(this).data('id')
 					var name = $(this).data('name') // data-name
+					var qty = $(this).data('qty')
+					var transaction = $(this).data('transaction-type') 
+
 					$('#editModal').modal('show');
-					$('#NameEditModal').val(name);
+					$('#MaterialIdEdit').val(id);
+					$('#MaterialNameEdit').val(name);
+					$('#QtyEdit').val(qty);
+					$('#TransactionTypeEdit').val(transaction);
 				});
 			},
 			error: function(xhr, ajaxOptions, thrownError) {

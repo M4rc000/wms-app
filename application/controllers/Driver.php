@@ -27,33 +27,24 @@ class Driver extends CI_Controller
 	}
 
 	public function EditDeliveryStatus(){
-		$material_id = $this->input->post('material_id');
-		$status = $this->input->post('status');
+		$id = $this->input->post('material_id');
+		$data = [
+			'status' => $this->input->post('StatusEdit'),
+			// '...' => $this->input->post('NameEditModal'),
+		];
 
-		// Tambahkan log untuk melihat data POST
-		log_message('debug', 'material_id: ' . $material_id);
-		log_message('debug', 'status: ' . $status);
-
-		if (empty($material_id) || empty($status)) {
-			log_message('debug', 'Missing input, redirecting...');
-			$this->session->set_flashdata('ERROR', 'Cannot update: missing ID or status.');
+		$this->DModel->updateData('dispatch_note', $id, $data);
+		
+		//  
+		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
+		if($success > 0){
+			$this->session->set_flashdata('SUCCESS', 'Status Successfully Updated.');
 			redirect('driver/monitoring_delivery');
-			return;
 		}
-
-		// Jalankan update
-		$this->db->where('Id', $material_id); // <- pastikan 'Id' sesuai dengan nama kolom DB kamu
-		$this->db->update('dispatch_note', ['Status' => $status]);
-
-		// Tambahkan log untuk melihat apakah update berhasil
-		if ($this->db->affected_rows() > 0) {
-			log_message('debug', 'Status updated successfully for ID ' . $material_id);
-			$this->session->set_flashdata('SUCCESS', 'Delivery status updated.');
-		} else {
-			log_message('debug', 'No rows updated. ID might be wrong or status same as before.');
-			$this->session->set_flashdata('ERROR', 'No data updated.');
+		else{
+			$this->session->set_flashdata('ERROR', 'Failed to Update Status.');
+			redirect('driver/monitoring_delivery');
 		}
-
 		redirect('driver/monitoring_delivery');
 	}
 

@@ -324,14 +324,13 @@ class Admin extends CI_Controller
 	}
 	
 	public function EditReceivingMaterial(){
-		$id = $this->input->post('NameEditModal');
+		$id = $this->input->post('user_id');
 		$data = [
-			'Material_no' => $this->input->post('NameEditModal'),
-			'Menu' => $this->input->post('NameEditModal'),
-			// '...' => $this->input->post('NameEditModal');
-			// '...' => $this->input->post('NameEditModal');
-			// '...' => $this->input->post('NameEditModal');
-			// '...' => $this->input->post('NameEditModal');
+			'Material_no' => $this->input->post('MaterialIdEdit'),
+			'Material_name' => $this->input->post('MaterialNameEdit'),
+			'Qty' => $this->input->post('QtyEdit'),
+			'Transaction_type' => $this->input->post('TransactionTypeEdit'),
+			// '...' => $this->input->post('NameEditModal'),
 		];
 
 		$this->AModel->updateData('storage', $id, $data);
@@ -339,14 +338,14 @@ class Admin extends CI_Controller
 		//  
 		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
 		if($success > 0){
-			$this->session->set_flashdata('SUCCESS', 'No delivery provided.');
-			redirect('admin/delivery_item');
+			$this->session->set_flashdata('SUCCESS', 'Data Successfully Updated.');
+			redirect('admin/manage_storage');
 		}
 		else{
-			$this->session->set_flashdata('ERROR', 'No delivery provided.');
-			redirect('admin/delivery_item');
+			$this->session->set_flashdata('ERROR', 'Error.');
+			redirect('admin/manage_storage');
 		}
-		redirect('admin/delivery_item');
+		redirect('admin/manage_storage');
 	}
 
 	public function print_delivery_pdf($id){

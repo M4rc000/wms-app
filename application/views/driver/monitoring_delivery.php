@@ -61,10 +61,13 @@
 </div>
 
 <!-- Edit Modal -->
+
 <div class="modal fade" id="editModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
+      
       <?= form_open_multipart('driver/EditDeliveryStatus'); ?>
+
       <div class="modal-header">
         <h5 class="modal-title">Edit Status</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -74,12 +77,12 @@
         <input type="hidden" class="form-control" id="material_id" name="material_id">
         <div class="row ps-2">
           <div class="col-6">
-            <label for="product_name" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="product_name" name="product_name" readonly>
+            <label for="ProductNameEdit" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="ProductNameEdit" name="ProductNameEdit" readonly>
           </div>
           <div class="col-6">
-            <label for="status" class="form-label">Status</label>
-            <select name="status" id="status" class="form-select" required>
+            <label for="StatusEdit" class="form-label">Status</label>
+            <select name="StatusEdit" id="StatusEdit" class="form-select" required>
               <option value="">-- Select Status --</option>
               <option value="Outgoing">Outgoing</option>
               <option value="Pending">Pending</option>
@@ -108,7 +111,6 @@
 		type: 'get',
 		dataType: 'json',
 		success: function (res) {
-			$('#spinner-container').hide(); // Sembunyikan spinner setelah data dimuat
 			var $tbody = $('#table-body'); // sesuai dengan ID tbody kamu
 
 			$.each(res, function (index, item) {
@@ -122,7 +124,7 @@
 					<td class="text-center">${item.Driver_id}</td>
 					<td class="text-center">${item.Delivery_date}</td>
 					<td>
-						<button type="button" class="btn btn-success edit-data"
+						<button type="button" class="btn btn-success edit-data" data-bs-toggle="modal" data-bs-target="#editModal"
 							data-id="${item.Id}" 
 							data-name="${item.Product_name}" 
 							data-status="${item.Status}">
@@ -133,15 +135,15 @@
 				$tbody.append(row);
 			});
 
-		$(document).on('click','.edit-data', function () {
+			$('.edit-data').on('click', function () {
 			const id = $(this).data('id');
 			const name = $(this).data('name');
 			const status = $(this).data('status');
-
-			$('#material_id').val(id);
-			$('#product_name').val(name);
-			$('#status').val(status);
+			
 			$('#editModal').modal('show');
+			$('#material_id').val(id);
+			$('#ProductNameEdit').val(name);
+			$('#StatusEdit').val(status);
 		});
 
 		},
