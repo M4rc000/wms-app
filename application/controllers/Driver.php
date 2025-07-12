@@ -36,15 +36,14 @@ class Driver extends CI_Controller
 		$this->DModel->updateData('dispatch_note', $id, $data);
 		
 		//  
-		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
-		if($success > 0){
+		$success = $this->db->affected_rows(); 
+
+		if ($success > 0) {
 			$this->session->set_flashdata('SUCCESS', 'Status Successfully Updated.');
-			redirect('driver/monitoring_delivery');
+		} else {
+			$this->session->set_flashdata('ERROR', 'Update Status Failed.');
 		}
-		else{
-			$this->session->set_flashdata('ERROR', 'Failed to Update Status.');
-			redirect('driver/monitoring_delivery');
-		}
+		
 		redirect('driver/monitoring_delivery');
 	}
 

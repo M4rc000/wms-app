@@ -173,13 +173,13 @@
 	});
 </script>
 
-<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_RAW')): ?>
+<?php if ($this->session->flashdata('SUCCESS')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
-				title: "Error",
-				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_RAW'); ?>`,
-				icon: "error"
+				title: "Success",
+				html: `<?= $this->session->flashdata('SUCCESS'); ?>`,
+				icon: "success"
 			});
 		});
 	</script>

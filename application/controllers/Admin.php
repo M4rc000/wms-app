@@ -336,15 +336,14 @@ class Admin extends CI_Controller
 		$this->AModel->updateData('storage', $id, $data);
 		
 		//  
-		$success = $this->db->affected_rows(); // UPDATE, CREATE, DELETE
-		if($success > 0){
+		$success = $this->db->affected_rows();
+
+		if ($success > 0) {
 			$this->session->set_flashdata('SUCCESS', 'Data Successfully Updated.');
-			redirect('admin/manage_storage');
+		} else {
+			$this->session->set_flashdata('ERROR', 'Update failed or data did not change.');
 		}
-		else{
-			$this->session->set_flashdata('ERROR', 'Error.');
-			redirect('admin/manage_storage');
-		}
+		
 		redirect('admin/manage_storage');
 	}
 

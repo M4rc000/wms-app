@@ -153,3 +153,26 @@
 	});
 });
 </script>
+
+<?php if ($this->session->flashdata('SUCCESS')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Success",
+				html: `<?= $this->session->flashdata('SUCCESS'); ?>`,
+				icon: "success"
+			});
+		});
+	</script>
+<?php endif; ?>
+<?php if ($this->session->flashdata('ERROR')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Error",
+				html: `<?= $this->session->flashdata('ERROR'); ?>`,
+				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>
