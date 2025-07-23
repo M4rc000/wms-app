@@ -93,8 +93,11 @@
 						'<td class="text-center">' + delivery.Driver_id + '</td>' +
 						'<td class="text-center">' + formatDateToLong(delivery.Delivery_date) + '</td>' +
 						'<td class="text-center">' +
-							'<button class="btn btn-sm btn-danger generate-pdf-btn" data-id="' + delivery.Id + '">' +
+							'<button class="btn btn-sm btn-danger me-2 generate-pdf-btn" data-id="' + delivery.Id + '">' +
 								'<i class="bi bi-file-earmark-pdf"></i>' +
+							'</button>' +
+							'<button class="btn btn-sm btn-outline-danger btn-delete-delivery" data-id="' + delivery.Id + '">' +
+								'<i class="bi bi-trash"></i>' +
 							'</button>' +
 						'</td>'
 						'</tr>';
@@ -128,9 +131,49 @@
 			const id = $(this).data('id');
 			window.open('<?= base_url("admin/print_delivery_pdf/"); ?>' + id, '_blank');
 		});
+
+		$(document).on('click', '.btn-delete-delivery', function() {
+			const id = $(this).data('id');
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "You won't be able to revert this!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = '<?= base_url("admin/delete_delivery_item/"); ?>' + id;
+				}
+			});
+		});
 	});
 </script>
 
+<?php if ($this->session->flashdata('SUCCESS_ADD_DELIVERY_ITEM')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Success",
+				html: `<?= $this->session->flashdata('SUCCESS_ADD_DELIVERY_ITEM'); ?>`,
+				icon: "success"
+			});
+		});
+	</script>
+<?php endif; ?>
+
+<?php if ($this->session->flashdata('FAILED_ADD_DELIVERY_ITEM')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Failed",
+				html: `<?= $this->session->flashdata('FAILED_ADD_DELIVERY_ITEM'); ?>`,
+				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>
 <?php if ($this->session->flashdata('ERROR')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
@@ -138,6 +181,18 @@
 				title: "Error",
 				html: `<?= $this->session->flashdata('ERROR'); ?>`,
 				icon: "error"
+			});
+		});
+	</script>
+<?php endif; ?>
+
+<?php if ($this->session->flashdata('SUCCESS_DELETE')): ?>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			Swal.fire({
+				title: "Terhapus",
+				html: `<?= $this->session->flashdata('SUCCESS_DELETE'); ?>`,
+				icon: "success"
 			});
 		});
 	</script>

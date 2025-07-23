@@ -179,6 +179,16 @@ class Admin extends CI_Controller
     // }
 	}
 
+	public function delete_delivery_item($id) 
+	{
+		$this->db->where('Id', $id);
+		$this->db->delete('dispatch_note'); // or soft delete
+
+		$this->session->set_flashdata('SUCCESS_DELETE', 'Item berhasil dihapus.');
+		redirect('admin/delivery_item');
+}
+
+
 	public function receiving_wip(){
 		$data['title'] = 'Receiving WIP Material';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
