@@ -51,147 +51,132 @@ class Admin extends CI_Controller
 
 	public function addDeliveryNote()
 	{
-		 error_reporting(E_ALL);
-    	ini_set('display_errors', 1);
-		log_message('debug', 'Masuk ke fungsi addDeliveryNote');
+		// Ambil data user dari session
+    $usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
-		// Ambil data user yang sedang login
-		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+    if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+        $this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+        redirect('auth');
+        return;
+    }
 
-		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
-			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
-			redirect('auth');
-			return;
-		}
+    // Ambil data materials dari POST
+    $delivery = $this->input->post('materials');
+    if (empty($delivery)) {
+        $this->session->set_flashdata('ERROR', 'Tidak ada data dikirim.');
+        redirect('admin/delivery_item');
+        return;
+    }
 
-		$delivery = $this->input->post('materials');
-		if (empty($delivery)) {
-			$this->session->set_flashdata('ERROR', 'No delivery provided.');
-			redirect('admin/delivery_item');
-			return;
-		}
+    $successfulInserts = 0;
 
-		$successfulInserts = 0;
+    // Mulai transaksi database
+    $this->db->trans_start();
 
-		$this->db->trans_start();
+    foreach ($delivery as $item) {
+        // Validasi minimum
+        if (empty($item['Product_no']) || empty($item['Product_name']) || empty($item['Qty']) || empty($item['Delivery_date'])) {
+            continue;
+        }
 
-		// Start a transaction to ensure atomicity
-		$this->db->trans_start();
-		
-		foreach ($delivery as $item) {
-			$DataDeliveryStatus = [
-				'Product_no'      => $item['Product_no'],
-				'Product_name'    => $item['Product_name'],
-				'No_SJ'            => $item['No_SJ'],
-				'No_PO'            => $item['No_PO'],
-				'Qty'              => floatval($item['Qty']),
-				'Unit'             => $item['Unit'],
-				'Status' 		   => $item['Status'],
-				'Driver_id' 	   => $item['Driver_id'],
-				'Delivery_date'    => $item['Delivery_date'],
-				'Active'           => 1,
-				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $usersession['Id'],
-				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $usersession['Id']
-			];
+        // Format tanggal
+        $deliveryDate = date('Y-m-d', strtotime($item['Delivery_date']));
 
-			log_message('debug', 'DataDeliveryStatus: ' . print_r($DataDeliveryStatus, true));
-			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
-			$check_insert = $this->db->affected_rows();
+        $DataDeliveryStatus = [
+            'Product_no'     => $item['Product_no'],
+            'Product_name'   => $item['Product_name'],
+            'No_SJ'          => $item['No_SJ'] ?? null,
+            'No_PO'          => $item['No_PO'] ?? null,
+            'Qty'            => floatval($item['Qty']),
+            'Unit'           => $item['Unit'] ?? null,
+            'Status'         => $item['Status'] ?? 'Pending',
+            'Driver_id'      => $item['Driver_id'] ?? null,
+            'Delivery_date'  => $deliveryDate,
+            'Active'         => 1,
+            'Created_at'     => date('Y-m-d H:i:s'),
+            'Created_by'     => $usersession['Id'],
+            'Updated_at'     => date('Y-m-d H:i:s'),
+            'Updated_by'     => $usersession['Id']
+        ];
 
-			if ($check_insert > 0) {
-				// RECORD BOM LOG
-				$query_log = $this->db->last_query();
-				$log_data = [
-					'affected_table' => 'dispatch_note',
-					'queries'        => $query_log,
-					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $usersession['Id']
-				];
-				$this->db->insert('log', $log_data);
-				$successfulInserts++;
-			}
-		}
+        // Insert ke database
+        $this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
+        $check_insert = $this->db->affected_rows();
 
-		 $this->db->trans_complete();
+        // Jika berhasil insert, log query-nya
+        if ($check_insert > 0) {
+            $query_log = $this->db->last_query();
+            $log_data = [
+                'affected_table' => 'dispatch_note',
+                'queries'        => $query_log,
+                'Created_at'     => date('Y-m-d H:i:s'),
+                'Created_by'     => $usersession['Id']
+            ];
+            $this->db->insert('log', $log_data);
+            $successfulInserts++;
+        }
+    }
 
-		if ($this->db->trans_status() === FALSE) {
-			log_message('error', 'Transaksi gagal saat insert dispatch_note');
-			$this->session->set_flashdata('ERROR', 'Terjadi kesalahan saat menyimpan data.');
-			redirect('admin/add_delivery_item');
-			return;
-		}
+    // Selesaikan transaksi
+    $this->db->trans_complete();
 
-		$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', $successfulInserts . ' item berhasil disimpan.');
-		redirect('admin/delivery_item');
-		log_message('debug', print_r($item, true));
-		
-	}
+    if ($this->db->trans_status() === FALSE) {
+        log_message('error', 'Transaksi gagal saat insert dispatch_note');
+        $this->session->set_flashdata('ERROR', 'Terjadi kesalahan saat menyimpan data.');
+        redirect('admin/add_delivery_item');
+        return;
+    }
 
+    if ($successfulInserts > 0) {
+        $this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', "$successfulInserts item berhasil disimpan.");
+    } else {
+        $this->session->set_flashdata('ERROR', 'Tidak ada data yang berhasil disimpan.');
+    }
 
-	public function addReceivingRawMaterial()
-	{
-		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+    redirect('admin/delivery_item');
 
-		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
-			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
-			redirect('auth');
-			return;
-		}
-		
-		$materials = $this->input->post('materials');
-		if (empty($materials)) {
-			$this->session->set_flashdata('ERROR', 'No materials provided.');
-			redirect('admin/receiving_raw');
-			return;
-		}
+	// 	$materials = $this->input->post('materials');
 
-		$successfulInserts = 0;
+    // if (!$materials || count($materials) == 0) {
+    //     $this->session->set_flashdata('ERROR', 'Tidak ada data dikirim.');
+    //     redirect('admin/delivery_item');
+    // }
 
-		// Start a transaction to ensure atomicity
-		$this->db->trans_start();
+    // $data = [];
 
-		foreach ($materials as $material) {
-			$DataReceivingRaw = [
-				'Material_no'      => $material['Material_no'],
-				'Material_name'    => $material['Material_name'],
-				'Qty'              => floatval($material['Qty']),
-				'Unit'             => $material['Unit'],
-				'Transaction_type' => $material['Transaction_type'],
-				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $usersession['Id'],
-				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $usersession['Id']
-			];
+    // foreach ($materials as $item) {
+    //     if (empty($item['Delivery_date']) || empty($item['Product_no'])) {
+    //         log_message('error', 'Item kosong: ' . print_r($item, true));
+    //         continue;
+    //     }
 
-			$this->AModel->insertData('storage', $DataReceivingRaw);
-			$check_insert = $this->db->affected_rows();
+    //     $deliveryDate = date('Y-m-d', strtotime($item['Delivery_date']));
 
-			if ($check_insert > 0) {
-				// RECORD BOM LOG
-				$query_log = $this->db->last_query();
-				$log_data = [
-					'affected_table' => 'storage',
-					'queries'        => $query_log,
-					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $usersession['Id']
-				];
-				$this->db->insert('log', $log_data);
-				$successfulInserts++;
-			}
-		}
+    //     $data[] = [
+    //         'Product_no'     => $item['Product_no'],
+    //         'Product_name'   => $item['Product_name'],
+    //         'No_SJ'          => $item['No_SJ'],
+    //         'No_PO'          => $item['No_PO'],
+    //         'Qty'            => floatval($item['Qty']),
+    //         'Delivery_date'  => $deliveryDate,
+    //     ];
+    // }
 
-		// Complete the transaction
-		$this->db->trans_complete();
+    // log_message('debug', 'Data akan diinsert: ' . print_r($data, true));
 
-		if ($this->db->trans_status() === FALSE) {
-			$this->session->set_flashdata('ERROR', 'Delivery note failed to save. Please try again.');
-		} else {
-			$this->session->set_flashdata('SUCCESS', $successfulInserts . ' delivery notes successfully saved.');
-		}
+    // if (count($data) > 0) {
+    //     $result = $this->db->insert_batch('dispatch_note', $data);
 
-		redirect('admin/delivery_item');
+    //     if ($result) {
+    //         $this->session->set_flashdata('SUCCESS', 'Data berhasil disimpan.');
+    //     } else {
+    //         $error = $this->db->error();
+    //         log_message('error', 'Gagal insert: ' . print_r($error, true));
+    //         $this->session->set_flashdata('ERROR', 'Terjadi kesalahan saat menyimpan.');
+    //     }
+    // } else {
+    //     $this->session->set_flashdata('ERROR', 'Data kosong/tidak valid.');
+    // }
 	}
 
 	public function receiving_wip(){
@@ -450,69 +435,4 @@ class Admin extends CI_Controller
 		$this->pdf->stream('surat_jalan_' . $id . '.pdf', ["Attachment" => false]);
 	}
 
-	public function addDeliveryItem(){
-		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
-
-		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
-			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
-			redirect('auth');
-			return;
-		}
-
-		$delivery = $this->input->post('delivery');
-		if (empty($delivery)) {
-			$this->session->set_flashdata('ERROR', 'No delivery provided.');
-			redirect('admin/delivery_item');
-			return;
-		}
-
-		$successfulInserts = 0;
-
-		// Start a transaction to ensure atomicity
-		$this->db->trans_start();
-
-		foreach ($delivery as $delivery) {
-			$DataDeliveryStatus = [
-				'Material_no'      => $delivery['Product_no'],
-				'Material_name'    => $delivery['Product_name'],
-				'Qty'              => floatval($delivery['Qty']),
-				'Unit'             => $delivery['Unit'],
-				'Status' 		   => $delivery['Status'],
-				'Driver_id' 	   => $delivery['Driver_id'],
-				'Delivery_date'    => $delivery['Delivery_date'],
-				'Created_at'       => date('Y-m-d H:i:s'),
-				'Created_by'       => $usersession['Id'],
-				'Updated_at'       => date('Y-m-d H:i:s'),
-				'Updated_by'       => $usersession['Id']
-			];
-
-			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
-			$check_insert = $this->db->affected_rows();
-
-			if ($check_insert > 0) {
-				// RECORD BOM LOG
-				$query_log = $this->db->last_query();
-				$log_data = [
-					'affected_table' => 'dispatch_note',
-					'queries'        => $query_log,
-					'Created_at'     => date('Y-m-d H:i:s'),
-					'Created_by'     => $usersession['Id']
-				];
-				$this->db->insert('log', $log_data);
-				$successfulInserts++;
-			}
-		}
-
-		// Complete the transaction
-		$this->db->trans_complete();
-
-		// Check if all delivery were inserted successfully
-		if ($this->db->trans_status() && $successfulInserts == count($delivery)) {
-			$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', 'All delivery added successfully.');
-		} else {
-			$this->session->set_flashdata('FAILED_ADD_DELIVERY_ITEM', 'Failed to add some or all delivery.');
-		}
-
-		redirect('admin/delivery_item');
-	}
 }

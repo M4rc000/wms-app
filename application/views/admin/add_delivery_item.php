@@ -163,8 +163,6 @@
 		function updateRowIndices() {
 			$('#table-body tr').each(function(index) {
 				$(this).find('td:first-child b').text(index + 1);
-
-				// ✅ PERBAIKAN: update semua elemen input & select name-nya
 				$(this).find('input, select').each(function() {
 					const name = $(this).attr('name');
 					if (name) {
