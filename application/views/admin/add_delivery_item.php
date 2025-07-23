@@ -24,7 +24,7 @@
 						</button>
 					</div>
 				</div>
-				<?= form_open_multipart('admin/addDeliveryItem'); ?>
+				<?= form_open_multipart('admin/addDeliveryNote'); ?>
 					<div class="row mt-2 mx-2">
 						<div class="col-12">
 							<div class="table-responsive">
@@ -92,12 +92,12 @@
 				<tr>
 					<td class="text-center py-3"><b>${rowIndex}</b></td>
 					<td>
-						<select class="form-select material-select w-full" name="materials[${rowIndex}][Material_no]" required>
+						<select class="form-select material-select w-full" name="materials[${rowIndex}][Product_no]" required>
 							${materialOptions}
 						</select>
 					</td>
 					<td>
-						<input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Material_name]" readonly>
+						<input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Product_name]" readonly>
 					</td>
 					<td>
 						<input type="text" class="form-control w-full" name="materials[${rowIndex}][No_SJ]" required>
@@ -163,10 +163,14 @@
 		function updateRowIndices() {
 			$('#table-body tr').each(function(index) {
 				$(this).find('td:first-child b').text(index + 1);
-				$(this).find('input').each(function() {
+
+				// ✅ PERBAIKAN: update semua elemen input & select name-nya
+				$(this).find('input, select').each(function() {
 					const name = $(this).attr('name');
-					const newName = name.replace(/\[\d+\]/, `[${index}]`);
-					$(this).attr('name', newName);
+					if (name) {
+						const newName = name.replace(/\[.*?\]/, `[${index}]`);
+						$(this).attr('name', newName);
+					}
 				});
 			});
 			rowIndex = $('#table-body tr').length;
@@ -175,21 +179,21 @@
 </script>
 
 
-<?php if ($this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW')): ?>
+<?php if ($this->session->flashdata('SUCCESS_ADD_DELIVERY_ITEM')): ?>
 	<script>
 		Swal.fire({
 			title: "Success",
-			html: `<?= $this->session->flashdata('SUCCESS_ADD_RECEIVING_RAW'); ?>`,
+			html: `<?= $this->session->flashdata('SUCCESS_ADD_DELIVERY_ITEM'); ?>`,
 			icon: "success"
 		});
 	</script>
 <?php endif; ?>
-<?php if ($this->session->flashdata('FAILED_ADD_RECEIVING_RAW')): ?>
+<?php if ($this->session->flashdata('FAILED_ADD_DELIVERY_ITEM')): ?>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			Swal.fire({
 				title: "Error",
-				html: `<?= $this->session->flashdata('FAILED_ADD_RECEIVING_RAW'); ?>`,
+				html: `<?= $this->session->flashdata('FAILED_ADD_DELIVERY_ITEM'); ?>`,
 				icon: "error"
 			});
 		});

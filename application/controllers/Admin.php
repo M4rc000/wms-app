@@ -39,7 +39,7 @@ class Admin extends CI_Controller
         $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		$data['materials'] = $this->AModel->getListWIP();
-		$data['users'] = $this->AModel->getUsers();
+		$data['users'] = $this->AModel->getUsersDriver();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
@@ -72,8 +72,8 @@ class Admin extends CI_Controller
 		
 		foreach ($delivery as $item) {
 			$DataDeliveryStatus = [
-				'Product_no'      => $item['Material_no'],
-				'Product_name'    => $item['Material_name'],
+				'Product_no'      => $item['Product_no'],
+				'Product_name'    => $item['Product_name'],
 				'No_SJ'            => $item['No_SJ'],
 				'No_PO'            => $item['No_PO'],
 				'Qty'              => floatval($item['Qty']),

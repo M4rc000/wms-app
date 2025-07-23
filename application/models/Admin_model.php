@@ -14,7 +14,7 @@ class Admin_model extends CI_Model {
 	{
 		return $this->db->insert($table, $Data);
 	}
-    public function getUsers() 
+    public function getUsersDriver() 
     {
         // Mengambil semua pengguna dengan Role_id 3 (misalnya, role untuk driver)
         // Pastikan Role_id sesuai dengan yang Anda inginkan
