@@ -17,6 +17,7 @@ class Admin extends CI_Controller
         $this->load->library('form_validation');
         $this->load->library('pagination');
         $this->load->model('Admin_model', 'AModel');
+		$this->load->library('pdf');
     }
 
     public function receiving_raw()
@@ -50,6 +51,11 @@ class Admin extends CI_Controller
 
 	public function addDeliveryNote()
 	{
+		 error_reporting(E_ALL);
+    	ini_set('display_errors', 1);
+		log_message('debug', 'Masuk ke fungsi addDeliveryNote');
+
+		// Ambil data user yang sedang login
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
@@ -67,6 +73,8 @@ class Admin extends CI_Controller
 
 		$successfulInserts = 0;
 
+		$this->db->trans_start();
+
 		// Start a transaction to ensure atomicity
 		$this->db->trans_start();
 		
@@ -81,12 +89,14 @@ class Admin extends CI_Controller
 				'Status' 		   => $item['Status'],
 				'Driver_id' 	   => $item['Driver_id'],
 				'Delivery_date'    => $item['Delivery_date'],
+				'Active'           => 1,
 				'Created_at'       => date('Y-m-d H:i:s'),
 				'Created_by'       => $usersession['Id'],
 				'Updated_at'       => date('Y-m-d H:i:s'),
 				'Updated_by'       => $usersession['Id']
 			];
 
+			log_message('debug', 'DataDeliveryStatus: ' . print_r($DataDeliveryStatus, true));
 			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
 			$check_insert = $this->db->affected_rows();
 
@@ -103,6 +113,20 @@ class Admin extends CI_Controller
 				$successfulInserts++;
 			}
 		}
+
+		 $this->db->trans_complete();
+
+		if ($this->db->trans_status() === FALSE) {
+			log_message('error', 'Transaksi gagal saat insert dispatch_note');
+			$this->session->set_flashdata('ERROR', 'Terjadi kesalahan saat menyimpan data.');
+			redirect('admin/add_delivery_item');
+			return;
+		}
+
+		$this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', $successfulInserts . ' item berhasil disimpan.');
+		redirect('admin/delivery_item');
+		log_message('debug', print_r($item, true));
+		
 	}
 
 
