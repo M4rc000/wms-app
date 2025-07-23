@@ -34,6 +34,8 @@
 											<th class="text-center">#</th>
 											<th class="text-center">Product No</th>
 											<th class="text-center">Product Name</th>
+											<th class="text-center">No SJ</th>
+											<th class="text-center">No PO</th>
 											<th class="text-center">Qty</th>
 											<th class="text-center">Uom</th>
 											<th class="text-center">Status</th>
@@ -98,13 +100,19 @@
 						<input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Material_name]" readonly>
 					</td>
 					<td>
+						<input type="text" class="form-control w-full" name="materials[${rowIndex}][No_SJ]" required>
+					</td>
+					<td>
+						<input type="text" class="form-control w-full" name="materials[${rowIndex}][No_PO]" required>
+					</td>
+					<td>
 						<input type="number" class="form-control material-qty w-full text-center" name="materials[${rowIndex}][Qty]" required>
 					</td>
 					<td>
 						<input type="text" class="form-control material-unit text-center w-full" name="materials[${rowIndex}][Unit]" readonly>
 					</td>
 					<td>
-						<select class="form-select transaction-type w-full text-center" name="materials[${rowIndex}][Transaction_type]" required>
+						<select class="form-select transaction-type w-full text-center" name="materials[${rowIndex}][Status]" required>
 							<option value="">Choose Type</option>
 							<option value="Outgoing">Outgoing</option>
 							<option value="Pending">Pending</option>

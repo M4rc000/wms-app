@@ -72,8 +72,10 @@ class Admin extends CI_Controller
 		
 		foreach ($delivery as $item) {
 			$DataDeliveryStatus = [
-				'Material_no'      => $item['Product_no'],
-				'Material_name'    => $item['Product_name'],
+				'Product_no'      => $item['Material_no'],
+				'Product_name'    => $item['Material_name'],
+				'No_SJ'            => $item['No_SJ'],
+				'No_PO'            => $item['No_PO'],
 				'Qty'              => floatval($item['Qty']),
 				'Unit'             => $item['Unit'],
 				'Status' 		   => $item['Status'],
