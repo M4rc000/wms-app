@@ -14,6 +14,12 @@ class Admin_model extends CI_Model {
 	{
 		return $this->db->insert($table, $Data);
 	}
+    public function getUsers() 
+    {
+        // Mengambil semua pengguna dengan Role_id 3 (misalnya, role untuk driver)
+        // Pastikan Role_id sesuai dengan yang Anda inginkan
+	    return $this->db->get_where('users', ['Role_id' => 3])->result_array();
+    }
 
 	public function deleteData($table, $id)
 	{

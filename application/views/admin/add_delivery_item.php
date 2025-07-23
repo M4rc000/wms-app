@@ -32,13 +32,14 @@
 									<thead>
 										<tr>
 											<th class="text-center">#</th>
-											<th class="text-center">Material No</th>
-											<th class="text-center">Material Name</th>
-											<th class="text-center">Transaction Type</th>
+											<th class="text-center">Product No</th>
+											<th class="text-center">Product Name</th>
 											<th class="text-center">Qty</th>
 											<th class="text-center">Uom</th>
-											<th class="text-center">Driver</th>
-											<th class="text-center">Action</th>
+											<th class="text-center">Status</th>
+											<th class="text-center">Driver ID</th>
+                                            <th class="text-center">Delivery Date</th>
+                                            <th class="text-center">Action</th>
 										</tr>
 									</thead>
 									<input type="text" name="user_id" id="user_id" value="<?= $user['Id']; ?>" hidden>
@@ -86,42 +87,45 @@
 			});
 
 			const newRow = `
-                <tr>
-                    <td class="py-3"><b>${rowIndex}</b></td>
-                    <td>
-						<select class="form-select material-select w-full" name="materials[${(rowIndex-1)}][Material_no]" required>
-                            ${materialOptions}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Material_name]" aria-label="Material Description" readonly>
-                    </td>
-                    <td>
-						<select class="form-select transaction-type w-full text-center" name="materials[${(rowIndex-1)}][Transaction_type]" required>
+				<tr>
+					<td class="text-center py-3"><b>${rowIndex}</b></td>
+					<td>
+						<select class="form-select material-select w-full" name="materials[${rowIndex}][Material_no]" required>
+							${materialOptions}
+						</select>
+					</td>
+					<td>
+						<input type="text" class="form-control material-name w-full" name="materials[${rowIndex}][Material_name]" readonly>
+					</td>
+					<td>
+						<input type="number" class="form-control material-qty w-full text-center" name="materials[${rowIndex}][Qty]" required>
+					</td>
+					<td>
+						<input type="text" class="form-control material-unit text-center w-full" name="materials[${rowIndex}][Unit]" readonly>
+					</td>
+					<td>
+						<select class="form-select transaction-type w-full text-center" name="materials[${rowIndex}][Transaction_type]" required>
 							<option value="">Choose Type</option>
-							<option value="In">In</option>
-							<option value="Out">Out</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-qty w-full text-center" name="materials[${rowIndex}][Qty]" aria-label="Quantity" required>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control material-unit text-center w-full" name="materials[${rowIndex}][Unit]" aria-label="Unit of Measure" readonly>
-                    </td>
-                    <td>
-                        <select class="form-select user-select w-full" name="userid[${(rowIndex-1)}][Name]" required>
-                            ${usersOption}
-                        </select>
-                    </td>
-                    
-                    <td class="text-center">
-                        <button class="btn btn-danger btn-remove-row w-full" type="button" aria-label="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+							<option value="Outgoing">Outgoing</option>
+							<option value="Pending">Pending</option>
+							<option value="Delivered">Delivered</option>
+						</select>
+					</td>
+					<td>
+						<select class="form-select user-select w-full" name="materials[${rowIndex}][Driver_id]" required>
+							${usersOption}
+						</select>
+					</td>
+					<td>
+						<input type="date" class="form-control text-center w-full" name="materials[${rowIndex}][Delivery_date]" required>
+					</td>
+					<td class="text-center">
+						<button class="btn btn-danger btn-remove-row w-full" type="button" aria-label="Delete">
+							<i class="bi bi-trash"></i>
+						</button>
+					</td>
+				</tr>
+			`;
 			$('#table-body').append(newRow);
 			updateRowIndices();
 

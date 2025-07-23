@@ -48,6 +48,61 @@ class Admin extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+	public function addDeliveryNote()
+	{
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+
+		$delivery = $this->input->post('materials');
+		if (empty($delivery)) {
+			$this->session->set_flashdata('ERROR', 'No delivery provided.');
+			redirect('admin/delivery_item');
+			return;
+		}
+
+		$successfulInserts = 0;
+
+		// Start a transaction to ensure atomicity
+		$this->db->trans_start();
+		
+		foreach ($delivery as $item) {
+			$DataDeliveryStatus = [
+				'Material_no'      => $item['Product_no'],
+				'Material_name'    => $item['Product_name'],
+				'Qty'              => floatval($item['Qty']),
+				'Unit'             => $item['Unit'],
+				'Status' 		   => $item['Status'],
+				'Driver_id' 	   => $item['Driver_id'],
+				'Delivery_date'    => $item['Delivery_date'],
+				'Created_at'       => date('Y-m-d H:i:s'),
+				'Created_by'       => $usersession['Id'],
+				'Updated_at'       => date('Y-m-d H:i:s'),
+				'Updated_by'       => $usersession['Id']
+			];
+
+			$this->AModel->insertData('dispatch_note', $DataDeliveryStatus);
+			$check_insert = $this->db->affected_rows();
+
+			if ($check_insert > 0) {
+				// RECORD BOM LOG
+				$query_log = $this->db->last_query();
+				$log_data = [
+					'affected_table' => 'dispatch_note',
+					'queries'        => $query_log,
+					'Created_at'     => date('Y-m-d H:i:s'),
+					'Created_by'     => $usersession['Id']
+				];
+				$this->db->insert('log', $log_data);
+				$successfulInserts++;
+			}
+		}
+	}
+
 
 	public function addReceivingRawMaterial()
 	{
@@ -104,14 +159,13 @@ class Admin extends CI_Controller
 		// Complete the transaction
 		$this->db->trans_complete();
 
-		// Check if all materials were inserted successfully
-		if ($this->db->trans_status() && $successfulInserts == count($materials)) {
-			$this->session->set_flashdata('SUCCESS_ADD_RECEIVING_RAW', 'All materials added successfully.');
+		if ($this->db->trans_status() === FALSE) {
+			$this->session->set_flashdata('ERROR', 'Delivery note failed to save. Please try again.');
 		} else {
-			$this->session->set_flashdata('FAILED_ADD_RECEIVING_RAW', 'Failed to add some or all materials.');
+			$this->session->set_flashdata('SUCCESS', $successfulInserts . ' delivery notes successfully saved.');
 		}
 
-		redirect('admin/receiving_raw');
+		redirect('admin/delivery_item');
 	}
 
 	public function receiving_wip(){
