@@ -216,6 +216,12 @@ class Admin_model extends CI_Model {
 
 	public function getDeliveryById($id)
     {
-        return $this->db->get_where('dispatch_note', ['id' => $id])->result_array();
+        // return $this->db->get_where('dispatch_note', ['id' => $id])->result_array();
+        
+        $this->db->select('dn.*, c.Name AS Client_name, c.Short_name');
+        $this->db->from('dispatch_note dn');
+        $this->db->join('client c', 'LEFT(dn.Product_no, 3) = c.Short_name', 'left');
+        $this->db->where('dn.Id', $id);
+        return $this->db->get()->result_array();
     }
 }

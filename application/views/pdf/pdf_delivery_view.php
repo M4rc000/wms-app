@@ -86,11 +86,11 @@
 
     <!-- Info surat jalan kanan -->
     <td style="width: 30%; text-align: right; font-size: 10px;">
-      PT. BERLINDO MITRA UTAMA<br>
-      NO SJ : CKC/SJ/025/05/2025<br>
-      DATE : <?=$Date;?><br>
-      NO. PO : SO174/0625/BMU/SCSJ
-    </td>
+      <?= htmlspecialchars($delivery[0]['Client_name']) ?><br>
+      NO SJ : <?= htmlspecialchars($delivery[0]['No_SJ']) ?><br>
+      DATE : <?= $Date ?><br>
+      NO. PO : <?= htmlspecialchars($delivery[0]['No_PO']) ?>
+  </td>
   </tr>
 </table>
 
