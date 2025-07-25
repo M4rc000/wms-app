@@ -44,20 +44,20 @@ GROUP BY
     
     public function getMaterialUsage() {
         return $this->db->query("SELECT 
-    Material_no,
-    Material_name,
-    Qty,
-    Unit
-FROM
-    storage
-WHERE 
-	Material_no LIKE '%RW%'
-AND
-    Transaction_type = 'Out'
-GROUP BY 
-    Material_no
-ORDER BY 
-    Material_no")->result_array();
+            Material_no,
+            Material_name,
+            Qty,
+            Unit
+        FROM
+            storage
+        WHERE 
+            Material_no LIKE '%RW%'
+        AND
+            Transaction_type = 'Out'
+        GROUP BY 
+            Material_no
+        ORDER BY 
+            Material_no")->result_array();
     }    
 
     public function getDemandStock() {

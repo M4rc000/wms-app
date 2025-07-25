@@ -34,6 +34,71 @@ class Admin extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+	public function addReceivingRawMaterial(){
+		// Get user session
+		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
+		// Check if user session is valid
+		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
+			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
+			redirect('auth');
+			return;
+		}
+		// Get materials from POST request
+		$materials = $this->input->post('materials');
+		if (empty($materials)) {
+			$this->session->set_flashdata('ERROR', 'No materials provided.');
+			redirect('admin/receiving_wip');
+			return;
+		}
+
+		$successfulInserts = 0;
+
+		// Start a transaction to ensure atomicity
+		$this->db->trans_start();
+		// Loop through each material and prepare data for insertion
+		foreach ($materials as $material) {
+			$DataReceivingRaw = [
+				'Material_no'      => $material['Material_no'],
+				'Material_name'    => $material['Material_name'],
+				'Qty'              => floatval($material['Qty']),
+				'Unit'             => $material['Unit'],
+				'Transaction_type' => $material['Transaction_type'],
+				'Created_at'       => date('Y-m-d H:i:s'),
+				'Created_by'       => $usersession['Id'],
+				'Updated_at'       => date('Y-m-d H:i:s'),
+				'Updated_by'       => $usersession['Id']
+			];
+			// Insert data into storage table
+			$this->AModel->insertData('storage', $DataReceivingRaw);
+			$check_insert = $this->db->affected_rows();
+
+			if ($check_insert > 0) {
+				// RECORD BOM LOG
+				$query_log = $this->db->last_query();
+				$log_data = [
+					'affected_table' => 'storage',
+					'queries'        => $query_log,
+					'Created_at'     => date('Y-m-d H:i:s'),
+					'Created_by'     => $usersession['Id']
+				];
+				$this->db->insert('log', $log_data);
+				$successfulInserts++;
+			}
+		}
+
+		// Complete the transaction
+		$this->db->trans_complete();
+
+		// Check if all materials were inserted successfully
+		if ($this->db->trans_status() && $successfulInserts == count($materials)) {
+			$this->session->set_flashdata('SUCCESS_ADD_RECEIVING_RAW', 'All materials added successfully.');
+		} else {
+			$this->session->set_flashdata('FAILED_ADD_RECEIVING_RAW', 'Failed to add some or all materials.');
+		}
+
+		redirect('admin/receiving_raw');
+	}
+
 	public function add_delivery_item(){
 
 		$data['title'] = 'New Delivery Item';
@@ -69,7 +134,6 @@ class Admin extends CI_Controller
     }
 
     $successfulInserts = 0;
-
     // Mulai transaksi database
     $this->db->trans_start();
 
@@ -114,6 +178,19 @@ class Admin extends CI_Controller
             ];
             $this->db->insert('log', $log_data);
             $successfulInserts++;
+
+			$dataStorage = [
+				'Material_no'      => $item['Product_no'],
+				'Material_name'    => $item['Product_name'],
+				'Transaction_type' => 'Out',
+				'Qty'              => floatval($item['Qty']),
+				'Unit'             => $item['Unit'] ?? null,
+				'Created_at'       => date('Y-m-d H:i:s'),
+				'Created_by'       => $usersession['Id']
+			];
+
+			$this->AModel->insertData('storage', $dataStorage);
+
         }
     }
 
