@@ -113,7 +113,7 @@
 							<button class="btn btn-success edit-data" 
 								data-bs-toggle="modal" 
 								data-bs-target="#editModal" 
-								data-id="${material.id}" 
+								data-id="${material.Id}" 
 								data-material-no="${material.Material_no}"
 								data-name="${material.Material_name}"
 								data-qty="${material.Qty}"
@@ -121,9 +121,8 @@
 								<i class="bx bxs-edit" style="color: white;"></i>
 							</button>
 
-							<button class="btn btn-danger ms-1" 
-								data-bs-toggle="modal" 
-								data-bs-target="#deleteModal${material.id}">
+							<button class="btn btn-danger ms-1 btn-delete-storage" 
+								data-id="${material.Id}">
 								<i class="bx bxs-trash"></i>
 							</button>
 						</td>
@@ -149,7 +148,7 @@
 					}
 				});
 
-
+				
 				$('.edit-data').on('click', function(){
 					var id = $(this).data('id')
 					var materialNo = $(this).data('material-no') // data-material-no
@@ -170,8 +169,34 @@
 			}
 		});
 
+		$(document).on('click', '.btn-delete-storage', function() {
+			const id = $(this).data('id');
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "You won't be able to revert this!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = '<?= base_url("admin/delete_storage_item/"); ?>' + id;
+				}
+			});
+		});
 	});
 </script>
+
+<?php if ($this->session->flashdata('SUCCESS_DELETE')): ?>
+<script>
+    Swal.fire({
+        title: "Deleted!",
+        text: "<?= $this->session->flashdata('SUCCESS_DELETE'); ?>",
+        icon: "success"
+    });
+</script>
+<?php endif; ?>
 
 <?php if ($this->session->flashdata('SUCCESS')): ?>
 	<script>

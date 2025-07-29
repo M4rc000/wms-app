@@ -196,14 +196,14 @@ class Admin extends CI_Controller
 
     // Selesaikan transaksi
     $this->db->trans_complete();
-
+	// Cek apakah transaksi berhasil
     if ($this->db->trans_status() === FALSE) {
         log_message('error', 'Transaksi gagal saat insert dispatch_note');
         $this->session->set_flashdata('ERROR', 'Terjadi kesalahan saat menyimpan data.');
         redirect('admin/add_delivery_item');
         return;
     }
-
+	// Set flashdata untuk sukses
     if ($successfulInserts > 0) {
         $this->session->set_flashdata('SUCCESS_ADD_DELIVERY_ITEM', "$successfulInserts item berhasil disimpan.");
     } else {
@@ -258,13 +258,21 @@ class Admin extends CI_Controller
 
 	public function delete_delivery_item($id) 
 	{
-		$this->db->where('Id', $id);
+		$this->db->where('Id', $id);	
 		$this->db->delete('dispatch_note'); // or soft delete
 
-		$this->session->set_flashdata('SUCCESS_DELETE', 'Item berhasil dihapus.');
+		$this->session->set_flashdata('SUCCESS_DELETE', 'Item successfuly removed.');
 		redirect('admin/delivery_item');
-}
+	}
 
+    public function delete_storage_item($id)
+	{
+		$this->db->where('Id', $id);
+		$this->db->delete('storage'); // or soft delete
+
+		$this->session->set_flashdata('SUCCESS_DELETE', 'Item successfully removed.');
+		redirect('admin/manage_storage');
+	}
 
 	public function receiving_wip(){
 		$data['title'] = 'Receiving WIP Material';

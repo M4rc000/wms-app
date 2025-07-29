@@ -8,12 +8,12 @@
   <title><?=$title;?> | WMS</title>
 
   <!-- Favicons -->
-  <link rel="shortcut icon" href="<?=base_url('assets');?>/img/logo.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="<?=base_url('assets');?>/img/CKC.png" type="image/x-icon">
 
 
   <!-- ICON HOME SCREEN -->
   <link rel="manifest" href="<?=base_url('assets');?>/manifest.json">
-  <link rel="icon" href="<?=base_url('assets');?>/img/valeo.png">
+  <link rel="icon" href="<?=base_url('assets');?>/img/CKC.png">
   <meta name="theme-color" content="#ffff">
 
 

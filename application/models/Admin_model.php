@@ -182,22 +182,18 @@ class Admin_model extends CI_Model {
     }
 
     public function getManageStorage() {
-        return $this->db->query("SELECT 
-			Material_no,
-			Material_name,
-			Qty,
-			Unit,
-			Transaction_type,
+    return $this->db->query("
+        SELECT 
+            Id,
+            Material_no,
+            Material_name,
+            Qty,
+            Unit,
+            Transaction_type,
             Updated_at
-			FROM
-				storage
-			-- WHERE 
-			-- 	Material_no LIKE '%RW%'
-			GROUP BY 
-				Material_no
-			ORDER BY 
-		Material_no")->result_array();
-    }    
+        FROM storage
+    ")->result_array();
+}
 
 	public function getDeliveryItem(){
 		return $this->db->query("SELECT 
