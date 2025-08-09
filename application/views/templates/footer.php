@@ -34,6 +34,22 @@
 			}
 		});
 	});
+
+	// Toggle Password Visibility
+	{% comment %} function togglePassword(inputId) {
+		const passwordInput = document.getElementById(inputId);
+		const eyeIcon = document.getElementById(inputId + '-icon');
+		
+		if (passwordInput.type === 'password') {
+			passwordInput.type = 'text';
+			eyeIcon.classList.remove('bi-eye');
+			eyeIcon.classList.add('bi-eye-slash');
+		} else {
+			passwordInput.type = 'password';
+			eyeIcon.classList.remove('bi-eye-slash');
+			eyeIcon.classList.add('bi-eye');
+		}
+	} {% endcomment %}
 </script>
 </body>
 

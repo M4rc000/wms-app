@@ -14,6 +14,7 @@ class AdminHead extends CI_Controller {
         $this->load->model('AdminHead_model','AHModel');   
     }
 	
+	//Dashboard
 	public function dashboard(){
 		$data['title'] = 'Dashboard';
 		$data['user'] = $this->db->get_where('users', [
@@ -55,6 +56,7 @@ class AdminHead extends CI_Controller {
 
 		echo json_encode($materials);
 	}
+	//End of Dashboard
 
 	public function manage_user()
 	{
@@ -161,6 +163,7 @@ class AdminHead extends CI_Controller {
 	// ACTION
 	// MANAGE USER
 	public function AddUser(){
+		//Security check
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
@@ -168,7 +171,7 @@ class AdminHead extends CI_Controller {
 			redirect('auth');
 			return;
 		}
-
+		
 		$Data = array(
 			'Name' => $this->input->post('name'),
 			'Email' => $this->input->post('email'),
@@ -178,9 +181,9 @@ class AdminHead extends CI_Controller {
 			'Created_at' => date('d-m-Y H:i'),
 			'Created_by' => $usersession['Id']
 		);
-
+		// Insert user data
 		$this->AHModel->insertData('users', $Data);
-
+		// Check if the insert was successful
 		$check_insert = $this->db->affected_rows();
 
 		if ($check_insert > 0) {
@@ -636,7 +639,7 @@ class AdminHead extends CI_Controller {
 		redirect('adminhead/manage_menu');
 	}
 
-	public function editMenu()
+	public function EditMenu()
 	{
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
@@ -675,7 +678,7 @@ class AdminHead extends CI_Controller {
 		redirect('adminhead/manage_menu');
 	}
 
-	public function deleteMenu(){
+	public function DeleteMenu(){
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {

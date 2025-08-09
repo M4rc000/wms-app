@@ -1,6 +1,6 @@
 <?php
 
-function is_logged_in()
+function is_logged_in() 
 {
 	$ci = get_instance();
 	if (!$ci->session->userdata('email')) {
@@ -21,7 +21,7 @@ function is_logged_in()
 				$queryMenu = $ci->db->get_where('user_menu', ['Name' => $menu])->row_array();
 				$menu_id = $queryMenu['Id'];
 			}
-			
+			// Get the user's access to the menu
 			$userAccess = $ci->db->get_where('user_access_menu', [
 				'Role_id' => $role_id,
 				'Menu_id' => $menu_id
@@ -44,7 +44,7 @@ function is_logged_in()
 			// echo '<br>';
 			// var_dump($userAccess);
 			// die;
-	
+			// Check if the user has access to the menu
 			if ($userAccess->num_rows() < 1) {
 				redirect('auth/blocked');
 			}
