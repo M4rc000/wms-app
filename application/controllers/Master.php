@@ -134,11 +134,13 @@ class Master extends CI_Controller
 		$Unit = $this->input->post('Unit');
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 		$id = $this->input->post('id');
+
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
 			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
 			redirect('auth');
 			return;
 		}
+
 		$Data = array(
 			'Material_no' => $Material_no,
 			'Material_name' => $Material_name,
@@ -162,7 +164,7 @@ class Master extends CI_Controller
 			$this->MModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_EDIT_RAW_MATERIAL', 'Raw material successfully updated');
 			
-			$update_storage = $this->MModel->update_data_storage($Material_no, $Unit);
+			$update_storage = $this->MModel->update_data_storage($Material_no, $Material_name, $Unit);
 			$query_log = $this->db->last_query();
 			$log_data = [
 				'affected_table' => 'storage',
@@ -202,6 +204,7 @@ class Master extends CI_Controller
 			];
 			$this->MModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_DELETE_RAW_MATERIAL', 'Raw Material successfully deleted');
+
 		} else {
 			$this->session->set_flashdata('FAILED_DELETE_RAW_MATERIAL', 'Failed to delete Raw Material');
 		}
@@ -209,6 +212,7 @@ class Master extends CI_Controller
 		redirect('master/raw_material');
 	}
 
+	// WIP Material
 	public function wip_material()
 	{
 		$data['title'] = 'WIP Material';
@@ -334,11 +338,13 @@ class Master extends CI_Controller
 		$Unit = $this->input->post('Unit');
 		$usersession = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 		$id = $this->input->post('id');
+
 		if (empty($usersession['Role_id']) || empty($usersession['Name'])) {
 			$this->session->set_flashdata('ERROR', 'Session expired or user not found.');
 			redirect('auth');
 			return;
 		}
+
 		$Data = array(
 			'Material_no' => $Material_no,
 			'Material_name' => $Material_name,
@@ -362,7 +368,7 @@ class Master extends CI_Controller
 			$this->MModel->insertData('log', $log_data);
 			$this->session->set_flashdata('SUCCESS_EDIT_WIP_MATERIAL', 'WIP material successfully updated');
 			
-			$update_storage = $this->MModel->update_data_storage($Material_no, $Unit);
+			$update_storage = $this->MModel->update_data_storage($Material_no, $Material_name, $Unit);
 			$query_log = $this->db->last_query();
 			$log_data = [
 				'affected_table' => 'storage',

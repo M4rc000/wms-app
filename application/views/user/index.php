@@ -1,11 +1,12 @@
 <section class="section profile">
 	<div class="row">
+		<?= $this->session->flashdata('message'); ?>
 		<div class="col-xl-4">
 
 			<div class="card">
 				<div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-					<img src="<?= base_url('assets'); ?>/img/Man.png" alt="Profile" class="rounded-circle">
+					<img src="<?= !empty($user['Image']) ? base_url('assets/img/profiles/' . $user['Image']) : base_url('assets/img/Man.png'); ?>" alt="Profile" class="rounded-circle">
 					<h2><?= ($user['Name']); ?></h2>
 					<h3>
 						<?php
@@ -16,12 +17,7 @@
 							$role_mapping[$role['Id']] = $role['Name'];
 						}
 
-						if (isset($name['Name'])) {
-							$role_id = $name['Role_id'];
-							echo isset($role_mapping[$role_id]) ? $role_mapping[$role_id] : 'Unknown Role';
-						} else {
-							echo 'Unknown';
-						}
+						echo 'Admin Head';
 						?>
 					</h3>
 					<div class="social-links mt-2">
@@ -40,6 +36,10 @@
 
 						<li class="nav-item">
 							<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+						</li>
+
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
 						</li>
 
 					</ul>
@@ -69,106 +69,62 @@
 						<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
 							<!-- Profile Edit Form -->
-							<form>
-								<div class="row mb-3">
-									<label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-									<div class="col-md-8 col-lg-9">
-										<img src="assets/img/profile-img.jpg" alt="Profile">
-										<div class="pt-2">
-											<a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-											<a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+							<form method="post" action="<?= base_url('user/update_profile'); ?>" enctype="multipart/form-data">
+								<div class="row">
+									<div class="col-md-6">
+										<h5 class="card-title">Profile Image</h5>
+										<div class="text-center mb-4">
+											<img id="profilePreview" src="<?= !empty($user['Image']) ? base_url('assets/img/profiles/' . $user['Image']) : base_url('assets/img/Man.png'); ?>" alt="Profile" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+											<div class="pt-2">
+												<input type="file" id="profileImage" name="profileImage" accept="image/*" style="display: none;">
+												<button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('profileImage').click();">
+													<i class="bi bi-upload"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<h5 class="card-title">Full Name</h5>
+										<div class="mb-3">
+											<input name="fullName" type="text" class="form-control" id="fullName" value="<?= ($user['Name']); ?>" placeholder="Enter your full name">
 										</div>
 									</div>
 								</div>
 
-								<div class="row mb-3">
-									<label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
-									</div>
-								</div>
 
-								<div class="row mb-3">
-									<label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
-									<div class="col-md-8 col-lg-9">
-										<textarea name="about" class="form-control" id="about" style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Job" class="col-md-4 col-lg-3 col-form-label">Job</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="job" type="text" class="form-control" id="Job" value="Web Designer">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Country" class="col-md-4 col-lg-3 col-form-label">Country</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="country" type="text" class="form-control" id="Country" value="USA">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="twitter" type="text" class="form-control" id="Twitter" value="https://twitter.com/#">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="facebook" type="text" class="form-control" id="Facebook" value="https://facebook.com/#">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram Profile</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="instagram" type="text" class="form-control" id="Instagram" value="https://instagram.com/#">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
-									<div class="col-md-8 col-lg-9">
-										<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">
-									</div>
-								</div>
-
-								<div class="text-center">
+								<div class="text-center mt-4">
 									<button type="submit" class="btn btn-primary">Save Changes</button>
 								</div>
 							</form><!-- End Profile Edit Form -->
+
+							<script>
+							document.getElementById('profileImage').addEventListener('change', function(event) {
+								const file = event.target.files[0];
+								if (file) {
+									// Validate file type
+									const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+									if (!allowedTypes.includes(file.type)) {
+										alert('Please select a valid image file (JPEG, JPG, PNG, or GIF)');
+										this.value = '';
+										return;
+									}
+									
+									// Validate file size (2MB)
+									if (file.size > 2 * 1024 * 1024) {
+										alert('File size must be less than 2MB');
+										this.value = '';
+										return;
+									}
+									
+									// Show preview
+									const reader = new FileReader();
+									reader.onload = function(e) {
+										document.getElementById('profilePreview').src = e.target.result;
+									};
+									reader.readAsDataURL(file);
+								}
+							});
+							</script>
 
 						</div>
 
@@ -253,4 +209,4 @@
 
 		</div>
 	</div>
-</section>
+</section

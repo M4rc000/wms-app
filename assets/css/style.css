@@ -67,6 +67,30 @@ h6 {
   color: #012970;
 }
 
+.profile-card img.rounded-circle {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50% !important;
+    aspect-ratio: 1;
+}
+
+.profile-overview img.rounded-circle {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50% !important;
+    aspect-ratio: 1;
+}
+
+.profile-edit img.rounded-circle {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50% !important;
+    aspect-ratio: 1;
+}
+
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/

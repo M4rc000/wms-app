@@ -22,7 +22,7 @@ class Admin extends CI_Controller
 
     public function receiving_raw()
     {
-        $data['title'] = 'Receiving Raw Material';
+        $data['title'] = 'Receiving Raw';
         $data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		$data['materials'] = $this->AModel->getListMaterial();
@@ -275,7 +275,7 @@ class Admin extends CI_Controller
 	}
 
 	public function receiving_wip(){
-		$data['title'] = 'Receiving WIP Material';
+		$data['title'] = 'Receiving WIP';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		$data['materials'] = $this->AModel->getListWIP();
@@ -365,7 +365,7 @@ class Admin extends CI_Controller
 	}
 
 	public function manage_storage(){
-		$data['title'] = 'Manage Storage';
+		$data['title'] = 'Storage';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		
@@ -387,7 +387,7 @@ class Admin extends CI_Controller
 	}
 
 	public function demand_forecasting_stock(){
-		$data['title'] = 'Demand Forecast Stock';
+		$data['title'] = 'Demand Forecasting Stock';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		$this->load->view('templates/header', $data);
@@ -525,7 +525,7 @@ class Admin extends CI_Controller
 		$html = $this->load->view('pdf/pdf_delivery_view', $data, true);
 
 		$this->pdf->loadHtml($html);
-		$this->pdf->setPaper('A4', 'portrait');
+		$this->pdf->setPaper('A5', 'landscape');
 		$this->pdf->render();
 		$this->pdf->stream('surat_jalan_' . $id . '.pdf', ["Attachment" => false]);
 	}

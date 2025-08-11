@@ -50,8 +50,3 @@
 	</div>
 </section>
 
-<script>
-	$(document).ready(function(){
-		$('#Client').select2();
-	});
-</script>

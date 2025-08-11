@@ -146,7 +146,7 @@ class AdminHead extends CI_Controller {
 
 	public function manage_submenu()
 	{
-		$data['title'] = 'Manage Sub-Menu';
+		$data['title'] = 'Manage Submenu';
 		$data['user'] = $this->db->get_where('users', ['Email' => $this->session->userdata('email')])->row_array();
 
 		$data['menus'] = $this->AHModel->getAllMenu();

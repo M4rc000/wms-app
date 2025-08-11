@@ -27,6 +27,7 @@ class Admin_model extends CI_Model {
 		$this->db->delete($table);
 	}
 
+    
 	public function updateData($table, $id, $Data)
 	{
 		$this->db->where('Id', $id);
@@ -213,7 +214,7 @@ class Admin_model extends CI_Model {
 	public function getDeliveryById($id)
     {
         // return $this->db->get_where('dispatch_note', ['id' => $id])->result_array();
-        
+        // Menggunakan join untuk mendapatkan nama klien berdasarkan Product_no
         $this->db->select('dn.*, c.Name AS Client_name, c.Short_name');
         $this->db->from('dispatch_note dn');
         $this->db->join('client c', 'LEFT(dn.Product_no, 3) = c.Short_name', 'left');

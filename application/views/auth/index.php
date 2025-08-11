@@ -20,7 +20,7 @@
         padding: 0.75rem !important;
     }
 </style>
-<section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4" style="background-image: url('<?=base_url('assets');?>/img/Background-CKC.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;">
+<section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4" style="background-image: url('<?=base_url('assets');?>/img/Background-ckc.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;">
 	<div class="container">
 		<div class="row justify-content-center">
 		<div class="col-lg-4 col-md-5 d-flex flex-column align-items-center justify-content-center">

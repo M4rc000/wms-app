@@ -37,7 +37,6 @@ class AdminHead_model extends CI_Model {
 		return $result ?: ['Id' => 0];
 	}
 
-
 	public function getAllMenu(){
 		return $this->db->get('user_menu')->result_array();
 	}
@@ -234,13 +233,13 @@ class AdminHead_model extends CI_Model {
 			$this->db->select('Material_no');
 			$this->db->from('demand_forecast');
 			$this->db->where('Material_no', $material_no);
-			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->where('YEAR(Date)', $period);
 			$this->db->group_by('Material_no');
 			$results = $this->db->get()->result_array();
 		} else {
 			$this->db->select('Material_no');
 			$this->db->from('demand_forecast');
-			$this->db->where('YEAR(Created_at)', $period);
+			$this->db->where('YEAR(Date)', $period);
 			$this->db->group_by('Material_no');
 			$results = $this->db->get()->result_array();
 		}
@@ -251,11 +250,11 @@ class AdminHead_model extends CI_Model {
 			$monthly_qty = array_fill(0, 12, 0); // Jan to Dec
 
 			// Get monthly quantity per material
-			$this->db->select("MONTH(Created_at) as month, SUM(Qty_predict) as total_qty");
+			$this->db->select("MONTH(Date) as month, SUM(Qty_predict) as total_qty");
 			$this->db->from('demand_forecast');
 			$this->db->where('Material_no', $mat_no);
-			$this->db->where('YEAR(Created_at)', $period);
-			$this->db->group_by('MONTH(Created_at)');
+			$this->db->where('YEAR(Date)', $period);
+			$this->db->group_by('MONTH(Date)');
 			$qty_result = $this->db->get()->result_array();
 
 			foreach ($qty_result as $q) {

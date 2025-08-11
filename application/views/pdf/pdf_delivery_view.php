@@ -119,8 +119,8 @@
       <td class="letter"></td>
     </tr>
 		<?php endforeach; ?>
-    <!-- Baris kosong sampai 10 -->
-    <?php for ($i = 3; $i <= 10; $i++): ?>
+    <!-- Baris kosong sampai 5 -->
+    <?php for ($i = 2; $i <= 4; $i++): ?>
     <tr>
       <td class="letter"><?= $i ?></td>
       <td class="letter"></td>

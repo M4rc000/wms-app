@@ -61,13 +61,13 @@ class Master_model extends CI_Model {
 	}
 
 	public function generateNewWipMaterialNo($client_id) {
-		$client = $this->db->query("SELECT No FROM client WHERE Id = '$client_id'")->row_array();
+		$client = $this->db->query("SELECT Short_name FROM client WHERE Id = '$client_id'")->row_array();
 
-		if (!$client || !isset($client['No'])) {
+		if (!$client || !isset($client['Short_name'])) {
 			return null;
 		}
 
-		$clientNo = $client['No'];
+		$clientNo = $client['Short_name'];
 
 		// Ambil material terakhir yang dimulai dengan No client
 		$result = $this->db->query("
@@ -102,9 +102,14 @@ class Master_model extends CI_Model {
 	}
 
 
-	public function update_data_storage($material_no, $unit) {
-		$sql = "UPDATE storage SET Unit = ? WHERE Material_no = ?";
-		return $this->db->query($sql, array($unit, $material_no));
+	public function update_data_storage($Material_no, $Material_name, $Unit) {
+		$sql = "UPDATE storage SET Unit = ?, Material_name = ? WHERE Material_no = ?";
+		return $this->db->query($sql, array($Unit, $Material_name, $Material_no));
+	}
+
+	public function delete_data_storage($Material_no) {
+		$sql = "DELETE storage  WHERE Material_no = ?";
+		return $this->db->query($sql, array($Material_no));
 	}
 
 	public function GetAllClients(){

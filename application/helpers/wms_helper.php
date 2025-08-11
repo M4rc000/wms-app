@@ -3,11 +3,12 @@
 function is_logged_in() 
 {
 	$ci = get_instance();
+	// Check if the user is logged in
 	if (!$ci->session->userdata('email')) {
 		redirect('auth');
 	} else {
 		$menu = $ci->uri->segment(1);
-		
+		// If the user is logged in, check their access to the menu
 		if($menu == 'user'){
 			return true;
 		}
@@ -68,6 +69,7 @@ function is_logged_in()
 
 function check_access_submenu($role_id, $menu_id, $submenu_id)
 {
+	// Get the current CI instance
 	$ci = get_instance();
 
 	$ci->db->where('Role_id', $role_id);

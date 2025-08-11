@@ -2,6 +2,36 @@
 	.hover:hover {
 		cursor: pointer;
 	}
+	
+	.logo img {
+		max-height: 40px !important;
+		max-width: 150px !important;
+		width: auto !important;
+		height: auto !important;
+		object-fit: contain !important;
+	}
+	
+	@media (max-width: 768px) {
+		.logo img {
+			max-height: 35px !important;
+			max-width: 120px !important;
+		}
+	}
+	
+	@media (max-width: 480px) {
+		.logo img {
+			max-height: 30px !important;
+			max-width: 100px !important;
+		}
+	}
+
+	.nav-profile img.rounded-circle {
+		width: 36px;
+		height: 36px;
+		object-fit: cover;
+		border-radius: 50% !important;
+		aspect-ratio: 1;
+	}
 </style>
 
 <!-- ======= Header ======= -->
@@ -73,7 +103,7 @@
 
 		<li class="nav-item dropdown pe-4">
 			<span class="nav-link nav-profile d-flex align-items-center pe-0 hover" data-bs-toggle="dropdown">
-				<img src="<?= base_url('assets'); ?>/img/Man.png" alt="Profile" class="rounded-circle">
+				<img src="<?= !empty($user['Image']) ? base_url('assets/img/profiles/' . $user['Image']) : base_url('assets/img/Man.png'); ?>" alt="Profile" class="rounded-circle">
 				<span class="d-none d-md-block dropdown-toggle ps-2"><?= $this->session->userdata('username'); ?></span>
 			</span><!-- End Profile Image Icon -->
 
