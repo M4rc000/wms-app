@@ -36,7 +36,7 @@
 	});
 
 	// Toggle Password Visibility
-	{% comment %} function togglePassword(inputId) {
+	function togglePassword(inputId) {
 		const passwordInput = document.getElementById(inputId);
 		const eyeIcon = document.getElementById(inputId + '-icon');
 		
@@ -49,7 +49,7 @@
 			eyeIcon.classList.remove('bi-eye-slash');
 			eyeIcon.classList.add('bi-eye');
 		}
-	} {% endcomment %}
+	}
 </script>
 </body>
 

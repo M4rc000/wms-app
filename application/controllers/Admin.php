@@ -485,15 +485,16 @@ class Admin extends CI_Controller
 	
 	public function EditReceivingMaterial(){
 		$id = $this->input->post('user_id');
+		$material_id = $this->input->post('MaterialIdEdit');
 		$data = [
-			'Material_no' => $this->input->post('MaterialIdEdit'),
+			'Material_no' => $this->input->post('MaterialNoEdit'),
 			'Material_name' => $this->input->post('MaterialNameEdit'),
 			'Qty' => $this->input->post('QtyEdit'),
 			'Transaction_type' => $this->input->post('TransactionTypeEdit'),
 			// '...' => $this->input->post('NameEditModal'),
 		];
 
-		$this->AModel->updateData('storage', $id, $data);
+		$this->AModel->updateData('storage', $material_id, $data);
 		
 		//  
 		$success = $this->db->affected_rows();

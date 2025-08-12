@@ -56,7 +56,8 @@
 				<div class="row ps-2">
 					<div class="col-4">
 						<label for="MaterialIdEdit" class="form-label">Material Id</label>
-						<input type="text" class="form-control" id="MaterialIdEdit" name="MaterialIdEdit" readonly>
+						<input type="hidden" class="form-control" id="MaterialIdEdit" name="MaterialIdEdit" readonly>
+						<input type="text" class="form-control" id="MaterialNoEdit" name="MaterialNoEdit" readonly>
 					</div>
 					<div class="col-4">
 						<label for="MaterialNameEdit" class="form-label">Material Name</label>
@@ -100,6 +101,7 @@
 				var $tbody = $('.tbody-report-usage');
 
 				// Loop over the data and build table rows
+				console.log("Response: ", res);
 				$.each(res, function(index, material) {
 					var row = `<tr>
 						<td class="text-center">${(index + 1)} </td>
@@ -114,6 +116,7 @@
 								data-bs-toggle="modal" 
 								data-bs-target="#editModal" 
 								data-id="${material.Id}" 
+								data-material-id="${material.Id}"
 								data-material-no="${material.Material_no}"
 								data-name="${material.Material_name}"
 								data-qty="${material.Qty}"
@@ -151,14 +154,16 @@
 				
 				$('.edit-data').on('click', function(){
 					var id = $(this).data('id')
-					var materialNo = $(this).data('material-no') // data-material-no
-					var name = $(this).data('name') // data-name
+					var materialId = $(this).data('material-id') 
+					var materialNo = $(this).data('material-no') 
+					var name = $(this).data('name') 
 					var qty = $(this).data('qty')
-					var transaction = $(this).data('transaction-type') 
-
+					var transaction = $(this).data('transaction-type')
+					
 					$('#editModal').modal('show');
 					$('#user_id').val('<?= $user['Id']; ?>');
-					$('#MaterialIdEdit').val(materialNo);
+					$('#MaterialIdEdit').val(materialId);
+					$('#MaterialNoEdit').val(materialNo);
 					$('#MaterialNameEdit').val(name);
 					$('#QtyEdit').val(qty);
 					$('#TransactionTypeEdit').val(transaction);
